@@ -7,7 +7,7 @@ const projectDir = resolve(process.argv[2] ?? '')
 if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
   throw new Error('Pass the extracted naqsh-negar project directory as the first argument.')
 }
-for (const entry of ['src/app/SocialPage.tsx', 'src/app/social.css', 'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts', 'supabase/migrations/20261126093000_qnr_social_network.sql', 'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql', 'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql']) {
+for (const entry of ['src/app/premium-foundation.css', 'src/app/visual-interactions.ts', 'src/app/SocialPage.tsx', 'src/app/social.css', 'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts', 'supabase/migrations/20261126093000_qnr_social_network.sql', 'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql', 'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql']) {
   const source = join(overlayRoot, entry)
   const target = join(projectDir, entry)
   mkdirSync(dirname(target), { recursive: true })
@@ -21,7 +21,9 @@ function replaceOnce(before, after) {
   app = app.replace(before, after)
 }
 replaceOnce(
-  "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, X } from 'lucide-react'",
+  "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, X } from 'lucide-react'
+import './premium-foundation.css'
+import './visual-interactions'",
   "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, X } from 'lucide-react'",
 )
 replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { SocialPage } from './SocialPage'")
