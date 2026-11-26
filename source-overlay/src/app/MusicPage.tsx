@@ -38,7 +38,7 @@ export function MusicPage() {
   const [loading,setLoading] = useState(true)
   const [busy,setBusy] = useState('')
   const [notice,setNotice] = useState('')
-  const [tab,setTab] = useState<'library'|'my'|'playlists'|'review'>('library')
+  const [tab,setTab] = useState<'library'|'my'|'playlists'|'review'|'manage'>('library')
   const [title,setTitle] = useState('')
   const [artist,setArtist] = useState('')
   const [album,setAlbum] = useState('')
@@ -114,6 +114,7 @@ export function MusicPage() {
   const selectedPlaylistOwned = playlists.some(p=>p.id===selectedPlaylist&&p.owner_id===user)
   const visibleTracks = useMemo(() => tracks.filter(t =>
     tab==='review' ? admin && t.status==='pending' :
+    tab==='manage' ? admin :
     tab==='my' ? t.owner_id===user :
     tab==='library' ? t.status==='published' && t.visibility==='public' :
     t.status==='published' && t.visibility==='public'
@@ -171,15 +172,15 @@ export function MusicPage() {
     } finally { setBusy('') }
   }
 
-  async function moderate(track:Track, status:'published'|'rejected') {
+  async function moderate(track:Track, status:'published'|'rejected'|'disabled') {
     if (!supabase || !admin) return
     setBusy(track.id)
     const {error} = await supabase.from('qnr_music_tracks').update({
       status,published_at:status==='published'?new Date().toISOString():null,
-      moderation_note:status==='rejected'?'نیازمند اصلاح یا اثبات مجوز':null,updated_at:new Date().toISOString()
+      moderation_note:status==='rejected'?'نیازمند اصلاح یا اثبات مجوز':status==='disabled'?'غیرفعال‌شده توسط مدیر':null,updated_at:new Date().toISOString()
     }).eq('id',track.id)
     if (error) setNotice('ثبت تصمیم مدیر ناموفق بود: '+error.message)
-    else { setNotice(status==='published'?'قطعه پس از بررسی مجوز منتشر شد.':'قطعه رد شد.'); await load() }
+    else { setNotice(status==='published'?'قطعه منتشر یا دوباره فعال شد.':status==='disabled'?'قطعه غیرفعال شد.':'قطعه رد شد.'); await load() }
     setBusy('')
   }
   async function createPlaylist(e:FormEvent) {
@@ -260,10 +261,11 @@ export function MusicPage() {
       <button className={tab==='my'?'active':''} onClick={()=>setTab('my')}><Album size={17}/> قطعه‌های من</button>
       <button className={tab==='playlists'?'active':''} onClick={()=>setTab('playlists')}><ListMusic size={17}/> پلی‌لیست‌ها</button>
       {admin && <button className={tab==='review'?'active':''} onClick={()=>setTab('review')}><ShieldCheck size={17}/> بررسی مجوزها</button>}
+      {admin && <button className={tab==='manage'?'active':''} onClick={()=>setTab('manage')}><Disc3 size={17}/> مدیریت کتابخانه</button>}
     </nav>
 
-    {tab==='library' && <section className="nn-music-library">
-      <div className="nn-music-section-head"><div><span className="nn-music-kicker">CURATED SOUND</span><h2>کتابخانهٔ شنیداری</h2></div><span>{visibleTracks.length.toLocaleString('fa-IR')} قطعه</span></div>
+    {(tab==='library'||tab==='manage') && <section className="nn-music-library">
+      <div className="nn-music-section-head"><div><span className="nn-music-kicker">{tab==='manage'?'ADMIN LIBRARY':'CURATED SOUND'}</span><h2>{tab==='manage'?'مدیریت کتابخانهٔ موسیقی':'کتابخانهٔ شنیداری'}</h2></div><span>{visibleTracks.length.toLocaleString('fa-IR')} قطعه</span></div>
       {loading ? <div className="nn-music-loading"><AudioLines/> در حال دریافت کتابخانه…</div> : visibleTracks.length===0 ? <div className="nn-music-empty"><Disc3/><h3>کتابخانه آمادهٔ اولین قطعه است</h3><p>هنوز قطعهٔ دارای مجوزی منتشر نشده؛ می‌توانی اثر خودت یا موسیقی دارای مجوز را بارگذاری کنی.</p><button onClick={()=>setTab('my')}>افزودن اولین قطعه <Plus size={16}/></button></div> : <div className="nn-music-track-grid">
         {visibleTracks.map(track=><article className="nn-music-track" key={track.id}>
           <div className="nn-music-cover">{track.cover_url?<img src={track.cover_url} alt={'جلد '+track.title}/>:<div className="nn-music-cover-fallback"><Disc3 size={38}/></div>}
@@ -272,7 +274,10 @@ export function MusicPage() {
           <div className="nn-music-track-info"><strong>{track.title}</strong><span>{track.artist}</span><small>{track.genre||'بدون دسته‌بندی'} · {track.album||'تک‌آهنگ'} · {formatTime(track.duration_seconds)}</small></div>
           <div className="nn-music-track-actions">
             <span className={'nn-music-status '+track.status}>{track.status==='published'?'منتشرشده':track.status==='pending'?'در انتظار بررسی':track.status==='rejected'?'ردشده':'غیرفعال'}</span>
-            {user && <button onClick={()=>void addToPlaylist(track)} disabled={!playlists.length||busy===track.id} title="افزودن به پلی‌لیست"><Plus size={16}/></button>}
+            {user && tab==='library' && <button onClick={()=>void addToPlaylist(track)} disabled={!playlists.length||busy===track.id} title="افزودن به پلی‌لیست"><Plus size={16}/></button>}
+            {tab==='manage' && admin && track.status==='published' && <button onClick={()=>void moderate(track,'disabled')} disabled={busy===track.id} title="غیرفعال‌کردن"><X size={16}/></button>}
+            {tab==='manage' && admin && track.status==='disabled' && <button onClick={()=>void moderate(track,'published')} disabled={busy===track.id} title="فعال‌سازی"><Check size={16}/></button>}
+            {tab==='manage' && admin && track.status==='pending' && <button onClick={()=>setTab('review')} title="بررسی مجوز"><ShieldCheck size={16}/></button>}
           </div>
         </article>)}
       </div>}
