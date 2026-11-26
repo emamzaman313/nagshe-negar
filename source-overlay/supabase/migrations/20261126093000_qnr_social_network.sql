@@ -89,7 +89,7 @@ create policy "qnr social likes insert own" on public.qnr_social_likes for inser
 create policy "qnr social likes delete own" on public.qnr_social_likes for delete to authenticated using(user_id=(select auth.uid()));
 
 create policy "qnr social comments read" on public.qnr_social_comments for select to anon,authenticated using(
- (status='published' and exists(select 1 from public.qnr_social_posts p where p.id=post_id and p.status='published' and (p.visibility='public' or (p.visibility='followers' and exists(select 1 from public.qnr_social_follows f where f.follower_id=(select auth.uid()) and f.following_id=p.author_id))))
+ (status='published' and exists(select 1 from public.qnr_social_posts p where p.id=post_id and p.status='published' and (p.visibility='public' or (p.visibility='followers' and exists(select 1 from public.qnr_social_follows f where f.follower_id=(select auth.uid()) and f.following_id=p.author_id)))))
  or author_id=(select auth.uid())
  or exists(select 1 from public.qnr_user_roles r where r.user_id=(select auth.uid()) and r.role='admin')
 );
