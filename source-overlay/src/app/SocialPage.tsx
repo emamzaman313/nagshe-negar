@@ -199,7 +199,7 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     const parentPost = posts.find(p => p.id === postId)
     if (parentPost) await openComments(parentPost)
     else {
-      setCommentsFor(null)
+      setCommentsFor('')
       setComments([])
     }
   }
