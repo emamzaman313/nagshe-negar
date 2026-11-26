@@ -2,13 +2,9 @@ name: Deploy Naghsh Negar website
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'naqsh-negar-source.zip'
-      - 'source-overlay/**'
-      - 'source-overlay-b64/**'
-      - 'scripts/restore-overlay.sh'
       - '.github/workflows/deploy-site.yml'
       - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
@@ -30,14 +26,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract website source and apply upgrade overlay
+      - name: Extract website source
         run: |
           mkdir -p "$RUNNER_TEMP/naqsh-negar"
           unzip -q naqsh-negar-source.zip -d "$RUNNER_TEMP/naqsh-negar"
-          bash scripts/restore-overlay.sh
           test -f "$RUNNER_TEMP/naqsh-negar/naqsh-negar/package.json"
           test -f "$RUNNER_TEMP/naqsh-negar/naqsh-negar/vite.config.ts"
-          node source-overlay/apply-overlay.mjs "$RUNNER_TEMP/naqsh-negar/naqsh-negar"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
