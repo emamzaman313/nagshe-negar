@@ -4,7 +4,7 @@ import { supabase, supabaseConfigured } from '../lib/supabase'
 import './social-moderation-admin.css'
 
 type Post = { id:string; author_id:string; media_path:string; media_type:'image'|'video'; caption:string; status:string; moderation_note:string|null; created_at:string; author:string; url:string }
-type Report = { id:string; reporter_id:string; post_id:string; reason:string; details:string; status:string; created_at:string; reporter:string; postCaption:string; postType:string }
+type Report = { id:string; reporter_id:string; post_id:string; reason:string; details:string; status:string; created_at:string; reporter:string; postCaption:string; postType:string; postUrl:string }
 type Comment = { id:string; post_id:string; author_id:string; body:string; status:string; created_at:string; author:string }
 
 const faDate=(v:string)=>new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v))
@@ -51,12 +51,21 @@ export function SocialModerationAdminPage(){
    if(relatedPosts.error)throw relatedPosts.error
    const names=new Map((profiles.data??[]).map(x=>[x.user_id,x.display_name]))
    const postMap=new Map((relatedPosts.data??[]).map(x=>[x.id,x]))
-   const hydrated=await Promise.all(pRows.map(async p=>{
-    const signed=await supabase!.storage.from('qnr-social-media').createSignedUrl(p.media_path,1800)
-    return {...p,author:names.get(p.author_id)??'هنرمند نقش‌نگار',url:signed.data?.signedUrl??''} as Post
+   const signedMediaUrl=async(path:string)=>{
+    const {data,error}=await supabase!.storage.from('qnr-social-media').createSignedUrl(path,1800)
+    if(error)throw error
+    if(!data?.signedUrl)throw new Error('signed_media_url_missing')
+    return data.signedUrl
+   }
+   const hydrated=await Promise.all(pRows.map(async p=>({
+    ...p,author:names.get(p.author_id)??'هنرمند نقش‌نگار',url:await signedMediaUrl(p.media_path)
+   } as Post)))
+   const hydratedReports=await Promise.all(rRows.map(async r=>{
+    const p=postMap.get(r.post_id)
+    return {...r,reporter:names.get(r.reporter_id)??'کاربر',postCaption:p?.caption??'محتوا در دسترس نیست',postType:p?.media_type??'unknown',postUrl:p?.media_path?await signedMediaUrl(p.media_path):''} as Report
    }))
    setPosts(hydrated)
-   setReports(rRows.map(r=>{const p=postMap.get(r.post_id);return {...r,reporter:names.get(r.reporter_id)??'کاربر',postCaption:p?.caption??'محتوا در دسترس نیست',postType:p?.media_type??'unknown'} as Report}))
+   setReports(hydratedReports)
    setComments(cRows.map(c=>({...c,author:names.get(c.author_id)??'هنرمند نقش‌نگار'} as Comment)))
   }catch(e){setError('دریافت اطلاعات مدیریت ناموفق بود: '+((e as {message?:string})?.message??'خطای نامشخص'))}
   finally{setLoading(false)}
@@ -87,6 +96,12 @@ export function SocialModerationAdminPage(){
  const visiblePosts=tab==='reels'?posts.filter(p=>p.media_type==='video'):posts.filter(p=>p.media_type!=='video')
  return <main className="nn-mod-page">
   <header className="nn-mod-hero"><div><span>مرکز ایمنی و نظارت</span><h1>مدیریت جامعه</h1><p>بررسی ریلز، پست‌ها، گزارش‌های کاربران و دیدگاه‌ها از یک صف یکپارچه.</p></div><button type="button" onClick={()=>void load()} disabled={!!busy}><RefreshCw size={17}/> تازه‌سازی</button></header>
+  <section className="nn-mod-stats" aria-label="خلاصه نظارت">
+   <article><span>در انتظار بررسی</span><strong>{posts.length.toLocaleString('fa-IR')}</strong></article>
+   <article><span>ریلزهای منتظر</span><strong>{posts.filter(p=>p.media_type==='video').length.toLocaleString('fa-IR')}</strong></article>
+   <article><span>پست‌های تصویری منتظر</span><strong>{posts.filter(p=>p.media_type!=='video').length.toLocaleString('fa-IR')}</strong></article>
+   <article><span>گزارش‌های باز</span><strong>{reports.length.toLocaleString('fa-IR')}</strong></article>
+  </section>
   <nav className="nn-mod-tabs">
    <button className={tab==='posts'?'active':''} onClick={()=>setTab('posts')}><ImageIcon size={17}/> پست‌های تصویری <b>{posts.filter(p=>p.media_type!=='video').length.toLocaleString('fa-IR')}</b></button>
    <button className={tab==='reels'?'active':''} onClick={()=>setTab('reels')}><FileVideo size={17}/> تأیید ریلز <b>{posts.filter(p=>p.media_type==='video').length.toLocaleString('fa-IR')}</b></button>
@@ -99,7 +114,7 @@ export function SocialModerationAdminPage(){
    <div className="nn-mod-media">{p.url?(p.media_type==='video'?<video src={p.url} controls playsInline preload="metadata"/>:<img src={p.url} alt="پیش‌نمایش اثر"/>):<span>رسانه قابل بارگذاری نیست</span>}</div>
    <div className="nn-mod-body"><div className="nn-mod-meta"><b>{p.media_type==='video'?'ریلز / ویدئو':'تصویر'}</b><span>{p.author}</span><time>{faDate(p.created_at)}</time></div><p>{p.caption}</p><label>دلیل تصمیم (برای رد یا پنهان‌سازی الزامی)<textarea maxLength={1000} value={reasons[p.id]??''} onChange={e=>setReasons(v=>({...v,[p.id]:e.target.value}))} placeholder="دلیل را کوتاه و روشن بنویس…"/></label><div className="nn-mod-actions"><button className="approve" disabled={busy===p.id} onClick={()=>void act('post',p.id,'approve')}><Check size={16}/> تأیید و انتشار</button><button className="reject" disabled={busy===p.id} onClick={()=>void act('post',p.id,'reject')}><X size={16}/> رد اثر</button><button className="quiet" disabled={busy===p.id} onClick={()=>void act('post',p.id,'hide')}><Eye size={16}/> پنهان‌سازی</button></div></div>
   </article>):<div className="nn-mod-empty"><Check/><h2>{tab==='reels'?'صف تأیید ریلز خالی است':'صف بررسی پست‌ها خالی است'}</h2><p>مورد تازه‌ای برای بررسی وجود ندارد.</p></div>}</section>}
-  {tab==='reports'&&<section className="nn-mod-list">{reports.length?reports.map(r=><article className="nn-mod-report" key={r.id}><div><span className="nn-mod-reason">{reasonLabel[r.reason]??r.reason}</span><h2>{r.postCaption}</h2><p>گزارش‌دهنده: {r.reporter} · {faDate(r.created_at)}</p>{r.details&&<blockquote>{r.details}</blockquote>}<small>شناسه اثر: {r.post_id}</small><label>دلیل اقدام روی اثر<textarea maxLength={1000} value={reasons[r.post_id]??''} onChange={e=>setReasons(v=>({...v,[r.post_id]:e.target.value}))} placeholder="برای پنهان‌سازی، دلیل را وارد کن…"/></label></div><div className="nn-mod-actions"><button className="approve" disabled={busy===r.id} onClick={()=>void act('report',r.id,'review')}><Check size={16}/> رسیدگی شد</button><button className="quiet" disabled={busy===r.id} onClick={()=>void act('report',r.id,'dismiss')}><X size={16}/> رد گزارش</button><button className="reject" disabled={busy===r.id} onClick={()=>void act('post',r.post_id,'hide')}><Trash2 size={16}/> پنهان‌سازی اثر</button></div></article>):<div className="nn-mod-empty"><Check/><h2>گزارش بازی وجود ندارد</h2><p>همهٔ گزارش‌ها رسیدگی شده‌اند.</p></div>}</section>}
+  {tab==='reports'&&<section className="nn-mod-list">{reports.length?reports.map(r=><article className="nn-mod-report" key={r.id}><div><span className="nn-mod-reason">{reasonLabel[r.reason]??r.reason}</span><h2>{r.postCaption}</h2><p>گزارش‌دهنده: {r.reporter} · {faDate(r.created_at)}</p>{r.details&&<blockquote>{r.details}</blockquote>}<div className="nn-mod-reported-media">{r.postUrl?(r.postType==='video'?<video src={r.postUrl} controls playsInline preload="metadata"/>:<img src={r.postUrl} alt="محتوای گزارش‌شده"/>):<span>پیش‌نمایش رسانه موجود نیست</span>}<div><b>{r.postType==='video'?'ریلز گزارش‌شده':'پست تصویری گزارش‌شده'}</b><small>شناسه اثر: {r.post_id}</small></div></div><label>دلیل اقدام روی اثر<textarea maxLength={1000} value={reasons[r.post_id]??''} onChange={e=>setReasons(v=>({...v,[r.post_id]:e.target.value}))} placeholder="برای پنهان‌سازی، دلیل را وارد کن…"/></label></div><div className="nn-mod-actions"><button className="approve" disabled={busy===r.id} onClick={()=>void act('report',r.id,'review')}><Check size={16}/> رسیدگی شد</button><button className="quiet" disabled={busy===r.id} onClick={()=>void act('report',r.id,'dismiss')}><X size={16}/> رد گزارش</button><button className="reject" disabled={busy===r.id} onClick={()=>void act('post',r.post_id,'hide')}><Trash2 size={16}/> پنهان‌سازی اثر</button></div></article>):<div className="nn-mod-empty"><Check/><h2>گزارش بازی وجود ندارد</h2><p>همهٔ گزارش‌ها رسیدگی شده‌اند.</p></div>}</section>}
   {tab==='comments'&&<section className="nn-mod-list">{comments.length?comments.map(c=><article className="nn-mod-comment" key={c.id}><div><div className="nn-mod-meta"><b>{c.author}</b><time>{faDate(c.created_at)}</time><span className={c.status==='hidden'?'hidden':'visible'}>{c.status==='hidden'?'پنهان':'نمایش داده می‌شود'}</span></div><p>{c.body}</p><small>اثر مرتبط: {c.post_id}</small></div><div className="nn-mod-actions">{c.status==='published'?<><textarea aria-label="دلیل پنهان‌سازی" maxLength={1000} placeholder="دلیل پنهان‌سازی…" value={reasons[c.id]??''} onChange={e=>setReasons(v=>({...v,[c.id]:e.target.value}))}/><button className="reject" disabled={busy===c.id} onClick={()=>void act('comment',c.id,'hide')}>پنهان‌سازی</button></>:<button className="approve" disabled={busy===c.id} onClick={()=>void act('comment',c.id,'restore')}>بازگردانی</button>}</div></article>):<div className="nn-mod-empty"><Check/><h2>دیدگاهی وجود ندارد</h2></div>}</section>}
  </main>
 }

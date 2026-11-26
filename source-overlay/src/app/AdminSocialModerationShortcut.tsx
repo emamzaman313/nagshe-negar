@@ -8,13 +8,19 @@ export function AdminSocialModerationShortcut(){
  useEffect(()=>{
   let active=true
   if(!supabase)return
-  supabase.auth.getSession().then(async({data})=>{
-   const userId=data.session?.user.id
-   if(!userId)return
+  const checkRole=async(userId:string|null)=>{
+   if(!userId){if(active)setVisible(false);return}
    const {data:role,error}=await supabase!.from('qnr_user_roles').select('role').eq('user_id',userId).eq('role','admin').maybeSingle()
-   if(active&&!error&&role)setVisible(true)
+   if(active)setVisible(!error&&Boolean(role))
+  }
+  const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{
+   void checkRole(session?.user.id??null)
   })
-  return()=>{active=false}
+  supabase.auth.getSession().then(({data,error})=>{
+   if(error){if(active)setVisible(false);return}
+   void checkRole(data.session?.user.id??null)
+  })
+  return()=>{active=false;subscription.unsubscribe()}
  },[])
  if(!visible)return null
  return <section className="nn-admin-mod-shortcut" aria-label="مدیریت جامعه و ریلز">
