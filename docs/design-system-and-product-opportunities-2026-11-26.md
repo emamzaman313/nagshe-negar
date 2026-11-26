@@ -89,3 +89,9 @@ Typography: Vazirmatn for Persian UI. Controls: 44px default, 36px small, 48px l
 - Figma MCP Starter call limit was reached, so no Figma capture or editable screen changes could be completed in this pass. The existing file remains: https://www.figma.com/design/5yXin1gDXPG05rxie2rADX
 - Product Design's full screenshot-based audit requires ChatGPT Work mode; this standard chat cannot execute that workflow.
 - Webflow returned zero connected sites; no Webflow site was edited. Thrixel and GSA Per Diem are not relevant to this product's quilting UI.
+
+
+## CI follow-up — PR16
+
+- GitHub Actions run `45819718631` succeeded for the initial visual-pass commit `96e36d554b033275d549bede1a793c64c5737b45`, including Vite build, Capacitor sync and Android APK artifact upload.
+- After that run started, further CSS-only dark-mode parity changes were committed; this follow-up commit is intentionally added after the first run completed so GitHub Actions validates the latest PR head as well.
