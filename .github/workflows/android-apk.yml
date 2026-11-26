@@ -8,6 +8,13 @@ on:
       - 'source-overlay/**'
       - '.github/workflows/android-apk.yml'
       - '.github/actions/validate-source/action.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'naqsh-negar-source.zip'
+      - 'source-overlay/**'
+      - '.github/workflows/android-apk.yml'
+      - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
 
 permissions:
