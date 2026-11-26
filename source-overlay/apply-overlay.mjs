@@ -30,4 +30,14 @@ replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n
 replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
 replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/social\" element={<SocialPage />} />\n        <Route path=\"/reels\" element={<SocialPage initialTab=\"reels\" />} />")
 writeFileSync(appPath, app)
-console.log('Applied Naghsh Negar social-network overlay.')
+const indexPath = join(projectDir, 'index.html')
+if (existsSync(indexPath)) {
+  let html = readFileSync(indexPath, 'utf8')
+  const refreshScript = '<script id="nn-sw-refresh">if ("serviceWorker" in navigator) { navigator.serviceWorker.getRegistrations().then(function (items) { items.forEach(function (registration) { registration.update() }) }); navigator.serviceWorker.addEventListener("controllerchange", function () { if (!window.__nnSwReloaded) { window.__nnSwReloaded = true; window.location.reload() } }) }</script>'
+  if (!html.includes('id="nn-sw-refresh"')) {
+    if (!html.includes('</head>')) throw new Error('index.html is missing closing head tag')
+    html = html.replace('</head>', refreshScript + '</head>')
+    writeFileSync(indexPath, html)
+  }
+}
+console.log('Applied Naghsh Negar social-network and premium visual overlays.')
