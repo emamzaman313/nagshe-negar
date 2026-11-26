@@ -1,0 +1,33 @@
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const overlayRoot = dirname(fileURLToPath(import.meta.url))
+const projectDir = resolve(process.argv[2] ?? '')
+if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
+  throw new Error('Pass the extracted naqsh-negar project directory as the first argument.')
+}
+for (const entry of ['src/app/SocialPage.tsx', 'src/app/social.css', 'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts', 'supabase/migrations/20261126093000_qnr_social_network.sql']) {
+  const source = join(overlayRoot, entry)
+  const target = join(projectDir, entry)
+  mkdirSync(dirname(target), { recursive: true })
+  cpSync(source, target)
+}
+const appPath = join(projectDir, 'src/app/App.tsx')
+let app = readFileSync(appPath, 'utf8')
+function replaceOnce(before, after) {
+  const occurrences = app.split(before).length - 1
+  if (occurrences !== 1) throw new Error(`Expected one App.tsx anchor, found ${occurrences}: ${before.slice(0, 90)}`)
+  app = app.replace(before, after)
+}
+replaceOnce(
+  "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, X } from 'lucide-react'",
+  "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, X } from 'lucide-react'",
+)
+replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { SocialPage } from './SocialPage'")
+replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
+replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n", "")
+replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
+replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/social\" element={<SocialPage />} />\n        <Route path=\"/reels\" element={<SocialPage initialTab=\"reels\" />} />")
+writeFileSync(appPath, app)
+console.log('Applied Naghsh Negar social-network overlay.')
