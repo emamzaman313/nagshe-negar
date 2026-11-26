@@ -38,6 +38,13 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Run dependency-free validation tests
+        working-directory: ${{ runner.temp }}/naqsh-negar/naqsh-negar
+        run: |
+          node --experimental-strip-types --test supabase/functions/create-order/order-lines.test.ts
+          node --experimental-strip-types --test supabase/functions/_shared/gallery-validation.test.ts
+          node --experimental-strip-types --test supabase/functions/_shared/chat-validation.test.ts
+
       - name: Configure Vite for the GitHub Pages path
         run: |
           python3 - <<'PY'
