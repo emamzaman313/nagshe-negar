@@ -6,7 +6,7 @@ import './music.css'
 
 type LicenseType = 'original' | 'cc0' | 'cc-by' | 'cc-by-sa' | 'licensed' | 'public-domain'
 type TrackRow = {
-  id:string; owner_id:string; title:string; artist:string; album:string|null; description:string|null
+  id:string; owner_id:string; title:string; artist:string; album:string|null; genre:string|null; description:string|null
   audio_path:string; cover_path:string|null; duration_seconds:number|null; mime_type:string; file_size_bytes:number
   sha256:string|null; license_type:LicenseType; license_url:string|null; rights_holder:string
   rights_confirmed:boolean; source:string; visibility:'public'|'private'; status:'pending'|'published'|'rejected'|'disabled'
@@ -48,6 +48,7 @@ export function MusicPage() {
   const [title,setTitle] = useState('')
   const [artist,setArtist] = useState('')
   const [album,setAlbum] = useState('')
+  const [genre,setGenre] = useState('بی‌کلام')
   const [description,setDescription] = useState('')
   const [rightsHolder,setRightsHolder] = useState('')
   const [license,setLicense] = useState<LicenseType>('original')
@@ -78,7 +79,7 @@ export function MusicPage() {
     setLoading(true)
     try {
       const {data,error} = await supabase.from('qnr_music_tracks')
-        .select('id,owner_id,title,artist,album,description,audio_path,cover_path,duration_seconds,mime_type,file_size_bytes,sha256,license_type,license_url,rights_holder,rights_confirmed,source,visibility,status,moderation_note,created_at,published_at')
+        .select('id,owner_id,title,artist,album,genre,description,audio_path,cover_path,duration_seconds,mime_type,file_size_bytes,sha256,license_type,license_url,rights_holder,rights_confirmed,source,visibility,status,moderation_note,created_at,published_at')
         .order('created_at',{ascending:false}).limit(100)
       if (error) throw error
       const hydrated = await Promise.all(((data ?? []) as TrackRow[]).map(async row => ({
@@ -137,11 +138,19 @@ export function MusicPage() {
     const coverExt = coverFile?.type==='image/png'?'png':coverFile?.type==='image/webp'?'webp':'jpg'
     const coverPath = coverFile ? user+'/'+id+'-cover.'+coverExt : null
     try {
+      const durationSeconds = await new Promise<number|null>(resolve => {
+        const objectUrl = URL.createObjectURL(audioFile)
+        const probe = new Audio()
+        probe.preload = 'metadata'
+        probe.onloadedmetadata = () => { const seconds = Number.isFinite(probe.duration) ? Math.round(probe.duration) : null; URL.revokeObjectURL(objectUrl); resolve(seconds) }
+        probe.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(null) }
+        probe.src = objectUrl
+      })
       const digest = await crypto.subtle.digest('SHA-256',await audioFile.arrayBuffer())
       const sha256 = Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('')
       const {error:insertError} = await supabase.from('qnr_music_tracks').insert({
-        id,owner_id:user,title:title.trim(),artist:artist.trim(),album:album.trim()||null,
-        description:description.trim()||null,audio_path:audioPath,cover_path:coverPath,
+        id,owner_id:user,title:title.trim(),artist:artist.trim(),album:album.trim()||null,genre:genre||null,
+        duration_seconds:durationSeconds,description:description.trim()||null,audio_path:audioPath,cover_path:coverPath,
         mime_type:mime,file_size_bytes:audioFile.size,sha256,license_type:license,
         license_url:licenseUrl.trim()||null,rights_holder:rightsHolder.trim(),rights_confirmed:true,
         source:'user_upload',visibility:'public',status:'pending'
@@ -153,7 +162,7 @@ export function MusicPage() {
         const coverUpload = await supabase.storage.from('qnr-music').upload(coverPath,coverFile,{contentType:coverFile.type,upsert:false})
         if (coverUpload.error) throw coverUpload.error
       }
-      setTitle('');setArtist('');setAlbum('');setDescription('');setRightsHolder('');setLicense('original');setLicenseUrl('')
+      setTitle('');setArtist('');setAlbum('');setGenre('بی‌کلام');setDescription('');setRightsHolder('');setLicense('original');setLicenseUrl('')
       setAudioFile(null);setCoverFile(null);setRightsAccepted(false)
       setNotice('فایل با SHA-256 ثبت شد و پس از بررسی مجوز توسط مدیر در کتابخانه منتشر می‌شود.')
       setTab('my')
@@ -263,7 +272,7 @@ export function MusicPage() {
           <div className="nn-music-cover">{track.cover_url?<img src={track.cover_url} alt={'جلد '+track.title}/>:<div className="nn-music-cover-fallback"><Disc3 size={38}/></div>}
             <button className="nn-music-play" onClick={()=>playTrack(track)} aria-label={'پخش '+track.title}><Play size={19} fill="currentColor"/></button>
           </div>
-          <div className="nn-music-track-info"><strong>{track.title}</strong><span>{track.artist}</span><small>{track.album||'تک‌آهنگ'} · {formatTime(track.duration_seconds)}</small></div>
+          <div className="nn-music-track-info"><strong>{track.title}</strong><span>{track.artist}</span><small>{track.genre||'بدون دسته‌بندی'} · {track.album||'تک‌آهنگ'} · {formatTime(track.duration_seconds)}</small></div>
           <div className="nn-music-track-actions">
             <span className={'nn-music-status '+track.status}>{track.status==='published'?'منتشرشده':track.status==='pending'?'در انتظار بررسی':track.status==='rejected'?'ردشده':'غیرفعال'}</span>
             {user && <button onClick={()=>void addToPlaylist(track)} disabled={!playlists.length||busy===track.id} title="افزودن به پلی‌لیست"><Plus size={16}/></button>}
@@ -280,6 +289,7 @@ export function MusicPage() {
           <label>نام قطعه<input value={title} onChange={e=>setTitle(e.target.value)} maxLength={120} required placeholder="مثلاً صبح در کارگاه"/></label>
           <label>نام هنرمند / خواننده<input value={artist} onChange={e=>setArtist(e.target.value)} maxLength={120} required placeholder="نام صاحب اجرا"/></label>
           <label>آلبوم (اختیاری)<input value={album} onChange={e=>setAlbum(e.target.value)} maxLength={120} placeholder="نام آلبوم"/></label>
+          <label>سبک موسیقی<select value={genre} onChange={e=>setGenre(e.target.value)}><option>بی‌کلام</option><option>آرامش‌بخش</option><option>کلاسیک</option><option>سنتی</option><option>جاز</option><option>الکترونیک</option><option>پاپ</option><option>سایر</option></select></label>
           <label>صاحب حق اثر<input value={rightsHolder} onChange={e=>setRightsHolder(e.target.value)} maxLength={160} required placeholder="نام شخص یا صاحب امتیاز"/></label>
           <label>نوع مجوز<select value={license} onChange={e=>setLicense(e.target.value as LicenseType)}>{LICENSES.map(l=><option key={l.value} value={l.value}>{l.label}</option>)}</select></label>
           <label>پیوند مدرک مجوز {['cc-by','cc-by-sa','licensed'].includes(license)?'(الزامی)':'(اختیاری)'}<input value={licenseUrl} onChange={e=>setLicenseUrl(e.target.value)} type="url" placeholder="https://…"/></label>

@@ -12,7 +12,7 @@
 - پلتفرم: وب و Android از کد React/Capacitor مشترک build می‌شوند؛ پخش پس‌زمینهٔ واقعی در Android هنگام بسته‌شدن اپ هنوز نیازمند MediaSession/Foreground Service بومی است.
 
 ## داده‌ها
-- qnr_music_tracks: metadata، حقوق، مجوز، وضعیت moderation، مسیر صوت و کاور.
+- qnr_music_tracks: metadata، حقوق، مجوز، سبک موسیقی، مدت قطعه، وضعیت moderation، مسیر صوت و کاور.
 - qnr_music_playlists: فهرست‌های شخصی/عمومی.
 - qnr_music_playlist_items: رابطه و ترتیب trackها.
 - qnr_profile_music: قطعهٔ منتخب پروفایل با سطح دسترسی.
@@ -36,6 +36,7 @@
 - 20261126152656_qnr_music_foreign_key_indexes
 - 20261126152845_qnr_music_public_playlist_read
 - 20261126153231_qnr_music_social_soundtrack_guard
+- 20261126153433_qnr_music_genre_metadata
 
 ## محدودیت‌ها / فاز بعدی
 - نمایش موسیقی منتخب در صفحهٔ پروفایل اصلی هنوز باید متصل شود.
