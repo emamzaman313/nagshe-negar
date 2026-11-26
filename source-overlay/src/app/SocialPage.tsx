@@ -27,6 +27,17 @@ async function stripImageMetadata(file:File):Promise<File> {
 
 const message = (e:string) => e === 'file_too_large' ? 'عکس حداکثر ۱۰ و ویدئو حداکثر ۱۰۰ مگابایت است.' : e === 'unsupported_type' ? 'فرمت فایل پشتیبانی نمی‌شود.' : e === 'caption_required' ? 'توضیح اثر را بنویس.' : e === 'caption_too_long' ? 'توضیح بیش از ۲۲۰۰ نویسه است.' : 'فایل معتبر نیست.'
 
+async function signedMediaUrl(path:string):Promise<string> {
+  try {
+    const {data,error} = await supabase!.storage.from('qnr-social-media').createSignedUrl(path,3600)
+    if (error || !data?.signedUrl) return ''
+    return data.signedUrl
+  } catch {
+    // One deleted or inaccessible object must not make the entire feed unavailable.
+    return ''
+  }
+}
+
 export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels' }) {
   const [user,setUser] = useState<string|null>(null), [admin,setAdmin] = useState(false)
   const [tab,setTab] = useState<Tab>(initialTab), [posts,setPosts] = useState<Post[]>([])
@@ -72,14 +83,17 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
         user ? supabase.from('qnr_social_bookmarks').select('post_id').eq('user_id',user).in('post_id',ids) : Promise.resolve({data:[]}),
         user ? supabase.from('qnr_social_follows').select('following_id').eq('follower_id',user) : Promise.resolve({data:[]}),
       ])
+      for (const result of [pr,mt,lk,bm,fl]) {
+        if ('error' in result && result.error) throw result.error
+      }
       const names = new Map((pr.data ?? []).map((x:any) => [x.user_id,x.display_name]))
       const metrics = new Map((mt.data ?? []).map((x:any) => [x.post_id,x]))
       const liked = new Set((lk.data ?? []).map((x:any) => x.post_id)), saved = new Set((bm.data ?? []).map((x:any) => x.post_id))
       const following = new Set((fl.data ?? []).map((x:any) => x.following_id))
       const result = await Promise.all(rows.map(async row => {
-        const {data:signed} = await supabase!.storage.from('qnr-social-media').createSignedUrl(row.media_path,3600)
+        const url = await signedMediaUrl(row.media_path)
         const m:any = metrics.get(row.id)
-        return {...row,author:names.get(row.author_id) ?? 'هنرمند نقش‌نگار',url:signed?.signedUrl ?? '',likes:Number(m?.likes_count ?? 0),comments:Number(m?.comments_count ?? 0),liked:liked.has(row.id),saved:saved.has(row.id),following:following.has(row.author_id)}
+        return {...row,author:names.get(row.author_id) ?? 'هنرمند نقش‌نگار',url,likes:Number(m?.likes_count ?? 0),comments:Number(m?.comments_count ?? 0),liked:liked.has(row.id),saved:saved.has(row.id),following:following.has(row.author_id)}
       }))
       setPosts(result)
     } catch { setError('فید دریافت نشد؛ اتصال یا دسترسی حساب را بررسی کن.') }
