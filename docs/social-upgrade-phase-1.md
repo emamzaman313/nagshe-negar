@@ -25,15 +25,16 @@
 مهاجرت‌های زیر روی دیتابیس اعمال و در migration ledger تأیید شده‌اند:
 - 20261126095835_qnr_social_network
 - 20261126095938_qnr_social_metrics_security_and_indexes
+- 20261126100341_qnr_social_acl_hardening
 
 جدول‌های اجتماعی با RLS فعال ساخته شده‌اند و bucket خصوصی qnr-social-media با سقف ۱۰۰ MiB و MIMEهای مجاز عکس/ویدئو ایجاد شده است.
-نمای شمارنده‌ها با security_invoker=true اصلاح شده است. در بررسی امنیتی فعلی، خطای Security Definer View برطرف شده؛ هشدار باقی‌مانده مربوط به غیرفعال بودن Leaked Password Protection در تنظیمات Auth است.
+نمای شمارنده‌ها با security_invoker=true اصلاح شده است. مجوزهای TRUNCATE و TRIGGER و REFERENCES برای نقش‌های anon و authenticated از جدول‌های اجتماعی برداشته شده‌اند تا RLS قابل دور زدن نباشد. در بررسی امنیتی فعلی، خطای Security Definer View برطرف شده؛ هشدار باقی‌مانده مربوط به غیرفعال بودن Leaked Password Protection در تنظیمات Auth است.
 
 ## وضعیت استقرار
 - دامنه اصلی Vercel: https://naghsh-negar.vercel.app
 - آخرین استقرار بررسی‌شده در این مرحله: READY و پاسخ صفحه اصلی 200 OK.
 - مسیرهای /social و /reels به همان برنامه React متصل‌اند.
-- GitHub Pages workflow در commit 8affd23 موفق شد؛ build اندروید در زمان آخرین بررسی هنوز در حال ساخت APK بود. پس از تغییرات بعدی UI اجتماعی باید نتیجه اجرای جدید CI نیز بررسی شود.
+- GitHub Pages و ساخت APK در commit 65426cdfbc188c063486161e830d0de581d43af9 موفق شدند. پس از تغییرات صرفاً مهاجرت/مجوز دیتابیس، CI تازه در حال اجراست.
 
 ## موارد باقی‌مانده برای عرضه کامل
 - تعیین حساب واقعی مدیر پس از ثبت‌نام صاحب پروژه؛ فعلاً هیچ نقش مدیریتی به حسابی اختصاص داده نشده و نباید شناسه کاربر حدس زده شود.
