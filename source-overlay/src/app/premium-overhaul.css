@@ -30,6 +30,10 @@ body{background:radial-gradient(ellipse at 8% 0%,rgba(205,220,201,.48),transpare
 .hero__actions{gap:13px!important}
 .hero__actions .button{min-height:51px!important;padding-inline:23px!important;border-radius:15px!important}
 .hero__art{width:min(430px,42vw)!important;inset-inline-end:4%!important}
+.hero__art:before{content:"";position:absolute;z-index:0;inset:13%;border-radius:50%;background:radial-gradient(circle,#fffdf8e8 0 48%,#e7efe5c9 49% 64%,#c99a4528 65% 100%),url('/assets/quilt-blocks/eight-point-star-preview.png') center/cover no-repeat;box-shadow:0 20px 48px rgba(29,73,61,.13),inset 0 0 0 1px #ffffffc7;opacity:.94;transform:rotate(8deg)}
+.hero__mark{z-index:2!important}
+.hero__orbit{z-index:1}
+
 .hero__mark{filter:drop-shadow(0 24px 25px rgba(29,73,61,.24))!important;transform:rotate(-8deg)!important}
 .hero__orbit--one{border:1px dashed rgba(39,100,77,.34)!important;box-shadow:0 0 0 18px rgba(255,255,255,.13),0 0 0 38px rgba(255,255,255,.09)}
 .hero__orbit--two{border:1px solid rgba(201,154,69,.4)!important}
