@@ -16,6 +16,7 @@ for (const entry of [
   'src/app/MusicPlayer.tsx', 'src/app/MusicAdminPage.tsx', 'src/app/AdminMusicShortcut.tsx', 'src/app/music.css',
   'supabase/migrations/20261126170000_qnr_music_admin_library.sql',
   'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts',
+  'src/lib/music-validation.ts', 'supabase/functions/_shared/music-validation.test.ts',
   'supabase/migrations/20261126093000_qnr_social_network.sql',
   'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql',
   'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql',
