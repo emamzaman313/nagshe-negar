@@ -64,19 +64,19 @@ runs:
             if (['node_modules', 'dist', '.git', 'android'].includes(entry.name)) continue;
             const full = path.join(dir, entry.name);
             if (entry.isDirectory()) walk(full);
-            else if (/\\.(tsx?|jsx?|css|scss)$/.test(entry.name)) files.push(full);
+            else if (/\.(tsx?|jsx?|css|scss)$/.test(entry.name)) files.push(full);
           }
         }
         walk('src');
-        const source = files.filter(f => /\\.(tsx?|jsx?)$/.test(f)).map(f => fs.readFileSync(f, 'utf8')).join('\\n');
-        const styles = files.filter(f => /\\.(css|scss)$/.test(f)).map(f => fs.readFileSync(f, 'utf8')).join('\\n');
+        const source = files.filter(f => /\.(tsx?|jsx?)$/.test(f)).map(f => fs.readFileSync(f, 'utf8')).join('\n');
+        const styles = files.filter(f => /\.(css|scss)$/.test(f)).map(f => fs.readFileSync(f, 'utf8')).join('\n');
         const collect = (regex, text) => [...text.matchAll(regex)].map(m => m[1]);
-        const routes = [...new Set(collect(/<Route\\b[^>]*\\bpath=["']([^"']+)/g, source))].sort();
-        const classes = [...new Set(collect(/\\.([a-zA-Z_][\\w-]*)/g, styles).filter(x => /(profile|avatar|cover|rank|badge|chat|message|reel|feed|nav|card|button|theme)/i.test(x)))].sort();
-        const breakpoints = [...new Set(collect(/@media\\s*\\((?:max|min)-width\\s*:\\s*([^)]+)/g, styles))].sort();
-        const keyframes = [...new Set(collect(/@keyframes\\s+([\\w-]+)/g, styles))].sort();
-        const tokens = [...new Set(collect(/(--[\\w-]+)\\s*:/g, styles))].sort();
-        const touch = [...new Set(collect(/(onPointer(?:Down|Move|Up|Cancel)|onTouch(?:Start|Move|End)|touch-action|pointercapture|swipe|drag)/gi, source + '\\n' + styles))].sort();
+        const routes = [...new Set(collect(/<Route\b[^>]*\bpath=["']([^"']+)/g, source))].sort();
+        const classes = [...new Set(collect(/\.([a-zA-Z_][\w-]*)/g, styles).filter(x => /(profile|avatar|cover|rank|badge|chat|message|reel|feed|nav|card|button|theme)/i.test(x)))].sort();
+        const breakpoints = [...new Set(collect(/@media\s*\((?:max|min)-width\s*:\s*([^)]+)/g, styles))].sort();
+        const keyframes = [...new Set(collect(/@keyframes\s+([\w-]+)/g, styles))].sort();
+        const tokens = [...new Set(collect(/(--[\w-]+)\s*:/g, styles))].sort();
+        const touch = [...new Set(collect(/(onPointer(?:Down|Move|Up|Cancel)|onTouch(?:Start|Move|End)|touch-action|pointercapture|swipe|drag)/gi, source + '\n' + styles))].sort();
         console.log('VISUAL_AUDIT ' + JSON.stringify({
           sourceFiles: files.length,
           routePaths: routes,
