@@ -52,3 +52,21 @@
   .main-content>.pathways .pathway-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 @media(max-width:430px){.main-content>.pathways .pathway-grid{grid-template-columns:1fr!important}}
+
+/* Reference proportions for content-heavy routes and the compact music dock. */
+@media(min-width:1100px){
+ .social-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+ .social-grid.reels{grid-template-columns:minmax(0,1fr)!important;max-width:520px!important}
+ .nn-stash-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important}
+ .nn-mod-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .qnr-music-player{left:auto!important;right:18px!important;inset-inline:unset!important;width:min(430px,calc(100vw - 270px))!important;margin:0!important}
+}
+@media(min-width:760px) and (max-width:1099px){
+ .social-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .nn-stash-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .qnr-music-player{left:auto!important;right:14px!important;inset-inline:unset!important;width:min(430px,calc(100vw - 28px))!important;margin:0!important}
+}
+@media(max-width:759px){
+ .social-grid,.nn-stash-grid{grid-template-columns:minmax(0,1fr)!important}
+ .qnr-music-player{left:8px!important;right:8px!important;inset-inline:unset!important;width:auto!important;margin:0!important}
+}
