@@ -9,7 +9,7 @@ create table if not exists public.qnr_music_platform_settings (
 alter table public.qnr_music_platform_settings enable row level security;
 drop policy if exists qnr_music_platform_settings_public_read on public.qnr_music_platform_settings;
 create policy qnr_music_platform_settings_public_read on public.qnr_music_platform_settings
- for select to anon, authenticated using (enabled = true or qnr_private.qnr_is_admin());
+ for select to anon, authenticated using (true);
 drop policy if exists qnr_music_platform_settings_admin_manage on public.qnr_music_platform_settings;
 create policy qnr_music_platform_settings_admin_manage on public.qnr_music_platform_settings
  for all to authenticated using (qnr_private.qnr_is_admin()) with check (qnr_private.qnr_is_admin());
