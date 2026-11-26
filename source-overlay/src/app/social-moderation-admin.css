@@ -75,3 +75,21 @@
 :root[data-theme="dark"] .nn-mod-body textarea,.dark .nn-mod-body textarea{background:#17241d;border-color:#3b5143;color:#e9f0e9}
 @media(max-width:760px){.nn-mod-stats article{min-height:96px}.nn-mod-stats strong{font-size:26px}.nn-mod-hero:after{left:-36px}}
 @media(prefers-reduced-motion:reduce){.nn-mod-stats article,.nn-mod-card,.nn-mod-report,.nn-mod-comment,.nn-mod-actions button,.nn-mod-hero>button{transition:none!important}}
+
+
+/* Visual pass 3 — moderation console finish. */
+.nn-mod-page{--nn-mod-shadow:0 14px 38px rgba(24,61,50,.075)}
+.nn-mod-hero{min-height:190px;border-radius:28px;box-shadow:0 20px 48px rgba(23,61,50,.17)}
+.nn-mod-hero h1{font-size:clamp(1.8rem,4vw,2.65rem);line-height:1.2}
+.nn-mod-stats article{border-radius:20px;box-shadow:var(--nn-mod-shadow)}
+.nn-mod-stats article strong{font-variant-numeric:tabular-nums}
+.nn-mod-tabs{position:sticky;top:68px;z-index:7;backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(24,61,50,.045)}
+.nn-mod-card,.nn-mod-report,.nn-mod-comment{border-radius:21px;box-shadow:var(--nn-mod-shadow)}
+.nn-mod-media{overflow:hidden;border-radius:16px}
+.nn-mod-actions{gap:9px}
+.nn-mod-actions button{border-radius:12px;min-height:44px}
+.nn-mod-actions .approve{background:linear-gradient(130deg,#dff2e3,#cce8d4);border:1px solid #b9ddc2}
+.nn-mod-actions .reject{background:linear-gradient(130deg,#fff0eb,#f7ddd7);border:1px solid #efc9c1}
+.nn-mod-empty{padding:clamp(30px,5vw,58px);border-radius:22px}
+@media(max-width:760px){.nn-mod-hero{min-height:160px;border-radius:21px}.nn-mod-tabs{top:58px}.nn-mod-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.nn-mod-card,.nn-mod-report,.nn-mod-comment,.nn-mod-stats article{transition:none}}
