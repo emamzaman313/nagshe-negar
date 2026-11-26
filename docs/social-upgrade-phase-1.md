@@ -1,33 +1,44 @@
 # Naghsh Negar — Social Upgrade / Phase 1
+تاریخ به‌روزرسانی: ۲۰۲۶-۱۱-۲۶
 
-## Delivered in source overlay
+## قابلیت‌های پیاده‌سازی‌شده در لایه اجتماعی
+- فید عمومی آثار با نمایش پست‌های تأییدشده و امکان انتشار فقط پس از ورود.
+- انتشار عکس JPEG/PNG/WebP تا ۱۰ MiB و ویدئو MP4/WebM/MOV تا ۱۰۰ MiB.
+- بازرمزگذاری تصاویر در مرورگر پیش از بارگذاری برای حذف فراداده‌های EXIF پشتیبانی‌شده.
+- پسندیدن، دیدگاه، دنبال‌کردن، ذخیره‌کردن و اشتراک‌گذاری پیوند مستقیم هر اثر.
+- صفحه ریلز عمودی؛ پخش بی‌صدا هنگام ورود و توقف ویدئوهای خارج از محدوده دید.
+- صف مدیریت اجتماعی برای تأیید، رد یا پنهان‌کردن آثار.
+- مخزن خصوصی Supabase Storage با مسیر مالک‌محور و سیاست خواندن فقط برای مالک یا مخاطب مجاز.
+- RLS برای پروفایل عمومی، پست‌ها، دنبال‌کردن، پسندها، دیدگاه‌ها، نشانک‌ها و گزارش‌ها.
+- شمارنده‌های پسند و دیدگاه از طریق نمای security_invoker و تابع تجمیع محدود در schema خصوصی؛ شناسه‌های کاربران پسندکننده به‌صورت عمومی افشا نمی‌شوند.
+- آزمون‌های مستقل برای نوع فایل، پسوند، سقف اندازه و اعتبارسنجی توضیح پست.
 
-- Authenticated social feed with public/following views.
-- Image publishing (JPEG, PNG, WebP up to 10 MiB) and video publishing (MP4, WebM, MOV up to 100 MiB).
-- Likes, comments, follows, bookmarks and native share affordance.
-- EXIF and supported image metadata removal before image upload.
-- Vertical reels with IntersectionObserver-driven autoplay and off-screen pause.
-- Admin moderation queue with publish/hide/remove actions and audit log entries.
-- Private Supabase Storage bucket with owner-path upload policy and visible-media read policy.
-- RLS policies for posts, likes, comments, follows and bookmarks.
-- Rate limits for post creation and comments.
-- Dependency-free tests for media MIME/extension/size and caption validation.
+## روش ساخت و استقرار
+- منبع پایه همچنان naqsh-negar-source.zip است.
+- پوشه متنی source-overlay/ بعد از استخراج روی منبع پایه اعمال می‌شود.
+- اسکریپت نصب Vercel مستقیماً overlay متنی را اعمال می‌کند؛ قطعه‌های Base64 قدیمی خراب‌اند و دیگر در مسیر build استفاده نمی‌شوند.
+- GitHub Actions وب و Android نیز overlay را قبل از اعتبارسنجی و build اعمال می‌کنند.
+- متغیرهای عمومی Supabase در Vercel تنظیم شده‌اند: VITE_SUPABASE_URL و VITE_SUPABASE_PUBLISHABLE_KEY.
 
-## Deployment model
+## وضعیت دیتابیس زنده
+پروژه Supabase با شناسه jnccbdgtdrbufzemmnod فعال است.
+مهاجرت‌های زیر روی دیتابیس اعمال و در migration ledger تأیید شده‌اند:
+- 20261126095835_qnr_social_network
+- 20261126095938_qnr_social_metrics_security_and_indexes
 
-The repository keeps its historical source archive and applies source-overlay/ after extraction in both GitHub Actions and Vercel. The compressed overlay is stored as base64 shards under source-overlay-b64/ and restored by scripts/restore-overlay.sh. The overlay is deterministic and includes the social components/styles, validation helper/test and SQL migration. App route changes are applied by guarded, exact-anchor replacements.
+جدول‌های اجتماعی با RLS فعال ساخته شده‌اند و bucket خصوصی qnr-social-media با سقف ۱۰۰ MiB و MIMEهای مجاز عکس/ویدئو ایجاد شده است.
+نمای شمارنده‌ها با security_invoker=true اصلاح شده است. در بررسی امنیتی فعلی، خطای Security Definer View برطرف شده؛ هشدار باقی‌مانده مربوط به غیرفعال بودن Leaked Password Protection در تنظیمات Auth است.
 
-## Database migration
+## وضعیت استقرار
+- دامنه اصلی Vercel: https://naghsh-negar.vercel.app
+- آخرین استقرار بررسی‌شده در این مرحله: READY و پاسخ صفحه اصلی 200 OK.
+- مسیرهای /social و /reels به همان برنامه React متصل‌اند.
+- GitHub Pages workflow در commit 8affd23 موفق شد؛ build اندروید در زمان آخرین بررسی هنوز در حال ساخت APK بود. پس از تغییرات بعدی UI اجتماعی باید نتیجه اجرای جدید CI نیز بررسی شود.
 
-source-overlay/supabase/migrations/20261126093000_qnr_social_network.sql
-
-This migration has not been applied to the hosted project because the existing Naghsh Negar Supabase project is paused. Do not claim the social feed is live until the project is restored, the migration is applied, the storage bucket and policies are verified, and a real authenticated upload/read/like/comment flow passes.
-
-## Remaining before production
-
-- Activate the intended Supabase project and apply/verify migrations.
-- Configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in GitHub and Vercel.
-- Add media transcoding, thumbnails and adaptive streaming for larger reels.
-- Add creator profiles, block/mute controls, notifications and abuse-rate controls.
-- Add payment provider credentials and verified webhook processing before enabling real charges.
-- Perform browser, Android device, accessibility and security tests.
+## موارد باقی‌مانده برای عرضه کامل
+- تعیین حساب واقعی مدیر پس از ثبت‌نام صاحب پروژه؛ فعلاً هیچ نقش مدیریتی به حسابی اختصاص داده نشده و نباید شناسه کاربر حدس زده شود.
+- آزمون end-to-end با حساب واقعی: ثبت‌نام، بارگذاری، امضای URL، پسند، دیدگاه، دنبال‌کردن و صف مدیریت.
+- پروفایل سازنده، مسدودسازی/بی‌صداکردن، اعلان‌ها و ابزارهای کامل ضدسوءاستفاده.
+- ترنسکد ویدئو، تصویر بندانگشتی و استریم تطبیقی برای ریلزهای طولانی.
+- بازار چندفروشنده، مدیریت فروشندگان و پرداخت خودکار هنوز کامل نیست؛ پرداخت واقعی تا زمان اتصال درگاه و webhook تأییدشده نباید فعال شود.
+- آزمون روی دستگاه Android واقعی، دسترس‌پذیری و امنیت نهایی.
