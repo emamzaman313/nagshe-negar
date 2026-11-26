@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { AlertTriangle, Check, Eye, FileVideo, Image as ImageIcon, RefreshCw, ShieldCheck, Trash2, X } from 'lucide-react'
+import { AlertTriangle, Check, Eye, FileVideo, RefreshCw, ShieldCheck, Trash2, X } from 'lucide-react'
 import { supabase, supabaseConfigured } from '../lib/supabase'
 import './social-moderation-admin.css'
 
