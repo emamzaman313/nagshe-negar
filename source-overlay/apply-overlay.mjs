@@ -8,7 +8,7 @@ if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
   throw new Error('Pass the extracted naqsh-negar project directory as the first argument.')
 }
 for (const entry of [
-  'src/app/premium-foundation.css', 'src/app/premium-overhaul.css', 'src/app/kaveh-visual-parity.css', 'src/app/visual-interactions.ts', 'src/app/route-metadata.ts', 'src/app/reference-dashboard.css',
+  'src/app/premium-foundation.css', 'src/app/premium-overhaul.css', 'src/app/kaveh-visual-parity.css', 'src/app/visual-interactions.ts', 'src/app/route-metadata.ts', 'src/app/reference-ateliers.css', 'src/app/reference-dashboard.css',
   'public/robots.txt', 'public/sitemap.xml', 'public/quilt-studio-preview.html', 'public/assets/quilt-blocks/eight-point-star-preview.png',
   'src/app/SocialPage.tsx', 'src/app/social.css',
   'src/app/SocialModerationAdminPage.tsx', 'src/app/AdminSocialModerationShortcut.tsx', 'src/app/social-moderation-admin.css',
