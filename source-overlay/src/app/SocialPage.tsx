@@ -84,7 +84,7 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
         user ? supabase.from('qnr_social_follows').select('following_id').eq('follower_id',user) : Promise.resolve({data:[]}),
       ])
       for (const result of [pr,mt,lk,bm,fl]) {
-        if (result.error) throw result.error
+        if ('error' in result && result.error) throw result.error
       }
       const names = new Map((pr.data ?? []).map((x:any) => [x.user_id,x.display_name]))
       const metrics = new Map((mt.data ?? []).map((x:any) => [x.post_id,x]))
