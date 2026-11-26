@@ -142,9 +142,10 @@ window.history.replaceState = ((
 
 window.addEventListener("popstate", syncRouteMetadata)
 const appRoot = document.getElementById("root") ?? document.documentElement
-const observer = new MutationObserver(() => queueMicrotask(() => { syncRouteMetadata(); syncSemanticHeadings(); addStudioNavLink() }))
+const observer = new MutationObserver(() => queueMicrotask(() => { syncRouteMetadata(); syncSemanticHeadings(); addStudioNavLink(); addEditorialContent() }))
 observer.observe(appRoot, { childList: true, subtree: true })
 syncRouteMetadata()
+addEditorialContent()
 
 
 /* Visible, route-specific editorial guidance. Kept separate from transactional UI and
