@@ -190,10 +190,16 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
   }
   async function moderate(p:Post,status:'published'|'rejected'|'hidden') {
     if (!supabase) return
+    const action = status === 'published' ? 'approve' : status === 'rejected' ? 'reject' : 'hide'
+    const reason = action === 'approve' ? null : window.prompt(action === 'reject' ? 'دلیل رد این اثر را بنویس:' : 'دلیل پنهان‌سازی این اثر را بنویس:')
+    if (action !== 'approve' && reason === null) return
+    if (action !== 'approve' && (!reason || !reason.trim())) { setNotice('برای رد یا پنهان‌سازی، ثبت دلیل الزامی است.'); return }
     setBusy(p.id)
-    const r = await supabase.from('qnr_social_posts').update({status,published_at:status === 'published' ? new Date().toISOString() : null}).eq('id',p.id)
-    if (r.error) setNotice('تغییر وضعیت انجام نشد.')
-    else { setNotice(status === 'published' ? 'اثر منتشر شد.' : 'وضعیت اثر به‌روز شد.'); await load() }
+    const r = await supabase.rpc('qnr_admin_moderate_social_content',{
+      p_target_type:'post',p_target_id:p.id,p_action:action,p_reason:reason?.trim() || null
+    })
+    if (r.error) setNotice('تغییر وضعیت انجام نشد؛ دسترسی مدیر و دلیل تصمیم را بررسی کن.')
+    else { setNotice(action === 'approve' ? 'اثر تأیید و منتشر شد؛ تصمیم در سوابق مدیریت ثبت شد.' : 'تصمیم ثبت شد و در سوابق مدیریت قرار گرفت.'); await load() }
     setBusy('')
   }
 

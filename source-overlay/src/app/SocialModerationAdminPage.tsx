@@ -51,11 +51,16 @@ export function SocialModerationAdminPage(){
    if(relatedPosts.error)throw relatedPosts.error
    const names=new Map((profiles.data??[]).map(x=>[x.user_id,x.display_name]))
    const postMap=new Map((relatedPosts.data??[]).map(x=>[x.id,x]))
+   // A single orphaned/deleted media object must not take down every moderation queue.
+   // Keep the text/report row actionable and render its existing "preview unavailable" state.
    const signedMediaUrl=async(path:string)=>{
-    const {data,error}=await supabase!.storage.from('qnr-social-media').createSignedUrl(path,1800)
-    if(error)throw error
-    if(!data?.signedUrl)throw new Error('signed_media_url_missing')
-    return data.signedUrl
+    try{
+     const {data,error}=await supabase!.storage.from('qnr-social-media').createSignedUrl(path,1800)
+     if(error||!data?.signedUrl)return ''
+     return data.signedUrl
+    }catch{
+     return ''
+    }
    }
    const hydrated=await Promise.all(pRows.map(async p=>({
     ...p,author:names.get(p.author_id)??'هنرمند نقش‌نگار',url:await signedMediaUrl(p.media_path)
