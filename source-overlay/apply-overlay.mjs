@@ -7,7 +7,7 @@ const projectDir = resolve(process.argv[2] ?? '')
 if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
   throw new Error('Pass the extracted naqsh-negar project directory as the first argument.')
 }
-for (const entry of ['src/app/premium-foundation.css', 'src/app/visual-interactions.ts', 'src/app/SocialPage.tsx', 'src/app/social.css', 'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts', 'supabase/migrations/20261126093000_qnr_social_network.sql', 'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql', 'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql']) {
+for (const entry of ['src/app/premium-foundation.css', 'src/app/visual-interactions.ts', 'src/app/SocialPage.tsx', 'src/app/social.css', 'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts', 'supabase/migrations/20261126093000_qnr_social_network.sql', 'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql', 'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql', 'supabase/migrations/20261126102533_fix_storage_policy_relation_grants.sql', 'supabase/migrations/20261126102552_fix_storage_policy_rls_subquery_grants.sql']) {
   const source = join(overlayRoot, entry)
   const target = join(projectDir, entry)
   mkdirSync(dirname(target), { recursive: true })
