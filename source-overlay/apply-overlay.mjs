@@ -7,7 +7,21 @@ const projectDir = resolve(process.argv[2] ?? '')
 if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
   throw new Error('Pass the extracted naqsh-negar project directory as the first argument.')
 }
-for (const entry of ['src/app/premium-foundation.css', 'src/app/visual-interactions.ts', 'src/app/SocialPage.tsx', 'src/app/social.css', 'src/app/FabricStashPage.tsx', 'src/app/fabric-stash.css', 'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts', 'supabase/migrations/20261126093000_qnr_social_network.sql', 'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql', 'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql', 'supabase/migrations/20261126102533_fix_storage_policy_relation_grants.sql', 'supabase/migrations/20261126102552_fix_storage_policy_rls_subquery_grants.sql', 'supabase/migrations/20261126103000_qnr_fabric_stash_inventory.sql']) {
+for (const entry of [
+  'src/app/premium-foundation.css', 'src/app/visual-interactions.ts',
+  'src/app/SocialPage.tsx', 'src/app/social.css',
+  'src/app/SocialModerationAdminPage.tsx', 'src/app/social-moderation-admin.css',
+  'src/app/FabricStashPage.tsx', 'src/app/fabric-stash.css',
+  'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts',
+  'supabase/migrations/20261126093000_qnr_social_network.sql',
+  'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql',
+  'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql',
+  'supabase/migrations/20261126102533_fix_storage_policy_relation_grants.sql',
+  'supabase/migrations/20261126102552_fix_storage_policy_rls_subquery_grants.sql',
+  'supabase/migrations/20261126103000_qnr_fabric_stash_inventory.sql',
+  'supabase/migrations/20261126110000_admin_social_moderation_workflow.sql',
+  'supabase/migrations/20261126111500_harden_social_moderation_inputs.sql'
+]) {
   const source = join(overlayRoot, entry)
   const target = join(projectDir, entry)
   mkdirSync(dirname(target), { recursive: true })
@@ -24,11 +38,11 @@ replaceOnce(
   "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, X } from 'lucide-react'",
   "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, Package, X } from 'lucide-react'",
 )
-replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { SocialPage } from './SocialPage'\nimport { FabricStashPage } from './FabricStashPage'\nimport './premium-foundation.css'\nimport './visual-interactions'")
+replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { SocialPage } from './SocialPage'\nimport { SocialModerationAdminPage } from './SocialModerationAdminPage'\nimport { FabricStashPage } from './FabricStashPage'\nimport './premium-foundation.css'\nimport './visual-interactions'")
 replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/stash', label: 'انبار پارچه', Icon: Package },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
 replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n", "")
-replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
-replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/social\" element={<SocialPage />} />\n        <Route path=\"/reels\" element={<SocialPage initialTab=\"reels\" />} />\n        <Route path=\"/stash\" element={<FabricStashPage />} />")
+replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/admin/social-moderation', 'مدیریت جامعه'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
+replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/social\" element={<SocialPage />} />\n        <Route path=\"/reels\" element={<SocialPage initialTab=\"reels\" />} />\n        <Route path=\"/admin/social-moderation\" element={<SocialModerationAdminPage />} />\n        <Route path=\"/stash\" element={<FabricStashPage />} />")
 writeFileSync(appPath, app)
 const indexPath = join(projectDir, 'index.html')
 if (existsSync(indexPath)) {
@@ -40,4 +54,4 @@ if (existsSync(indexPath)) {
     writeFileSync(indexPath, html)
   }
 }
-console.log('Applied Naghsh Negar social-network and premium visual overlays.')
+console.log('Applied Naghsh Negar social, moderation and premium visual overlays.')

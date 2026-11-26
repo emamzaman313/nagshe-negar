@@ -15,6 +15,10 @@ runs:
         test -f package-lock.json
         test -f src/app/SocialPage.tsx
         test -f src/app/social.css
+        test -f src/app/SocialModerationAdminPage.tsx
+        test -f src/app/social-moderation-admin.css
+        test -f supabase/migrations/20261126110000_admin_social_moderation_workflow.sql
+        test -f supabase/migrations/20261126111500_harden_social_moderation_inputs.sql
         test -f supabase/migrations/20261126093000_qnr_social_network.sql
         test -f supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql
         test -f supabase/migrations/20261126100341_qnr_social_acl_hardening.sql
@@ -22,6 +26,8 @@ runs:
         test -f supabase/functions/_shared/gallery-validation.test.ts
         test -f supabase/functions/_shared/chat-validation.test.ts
         test -f supabase/functions/_shared/social-validation.test.ts
+        grep -q 'admin/social-moderation' src/app/App.tsx
+        grep -q 'qnr_admin_moderate_social_content' src/app/SocialModerationAdminPage.tsx
     - name: Run dependency-free validation tests
       shell: bash
       working-directory: ${{ inputs.project-dir }}
