@@ -16,9 +16,9 @@ const routes: Record<string, RouteMetadata> = {
   "/shop/parche": { title: "پارچه و متریال چهل‌تکه‌دوزی | فروشگاه نقش‌نگار", description: "پارچه‌ها و متریال مناسب پروژه‌های چهل‌تکه‌دوزی را بررسی کن و جنس و رنگ موردنیاز طرحت را انتخاب کن." },
   "/support": { title: "پشتیبانی نقش‌نگار | راهنمای کاربران", description: "برای راهنمایی استفاده از نقش‌نگار، پیگیری درخواست‌ها و دریافت پاسخ پرسش‌های خود با پشتیبانی همراه شو." },
   "/privacy": { title: "حریم خصوصی | نقش‌نگار", description: "در سیاست حریم خصوصی نقش‌نگار با شیوهٔ نگهداری، استفاده و حفاظت از اطلاعات کاربران آشنا شو." },
-  "/account": { title: "حساب کاربری | نقش‌نگار", description: "مدیریت حساب شخصی و تنظیمات کاربری نقش‌نگار.", private: true },
-  "/cart": { title: "سبد خرید | نقش‌نگار", description: "مرور و مدیریت اقلام انتخاب‌شده در سبد خرید نقش‌نگار.", private: true },
-  "/notifications": { title: "اعلان‌های شخصی | نقش‌نگار", description: "مشاهدهٔ اعلان‌ها و پیام‌های مربوط به حساب کاربری.", private: true },
+  "/account": { title: "حساب کاربری | نقش‌نگار", description: "ورود به حساب شخصی، مدیریت اطلاعات پروفایل و تنظیم تنظیمات کاربری در فضای نقش‌نگار.", private: true },
+  "/cart": { title: "سبد خرید | نقش‌نگار", description: "مرور اقلام انتخاب‌شده، بررسی جزئیات سفارش و ادامهٔ فرایند خرید در فروشگاه نقش‌نگار.", private: true },
+  "/notifications": { title: "اعلان‌های شخصی | نقش‌نگار", description: "مشاهدهٔ اعلان‌های تازه، پیام‌های سیستمی و به‌روزرسانی‌های مرتبط با حساب شما در نقش‌نگار.", private: true },
   "/stash": { title: "انبار پارچه شخصی | نقش‌نگار", description: "مدیریت موجودی پارچه‌های کارگاه شخصی.", private: true },
 }
 
@@ -34,15 +34,20 @@ function setMeta(attribute: "name" | "property", key: string, content: string) {
 
 function addStudioNavLink() {
   const nav = document.querySelector<HTMLElement>("#root nav")
-  if (!nav || nav.querySelector("[data-nn-studio-link]")) return
+  if (!nav) return
   const sample = nav.querySelector<HTMLAnchorElement>("a[href]")
-  const link = document.createElement("a")
-  link.href = "/quilt-studio-preview.html"
-  link.textContent = "استودیوی لحاف"
-  link.setAttribute("data-nn-studio-link", "true")
-  link.setAttribute("aria-label", "استودیوی طراحی لحاف نقش‌نگار")
-  if (sample) link.className = sample.className
-  nav.appendChild(link)
+  const addLink = (href: string, label: string, marker: string, ariaLabel: string) => {
+    if (nav.querySelector(`[${marker}]`)) return
+    const link = document.createElement("a")
+    link.href = href
+    link.textContent = label
+    link.setAttribute(marker, "true")
+    link.setAttribute("aria-label", ariaLabel)
+    if (sample) link.className = sample.className
+    nav.appendChild(link)
+  }
+  addLink("/quilt-studio-preview.html", "استودیوی لحاف", "data-nn-studio-link", "استودیوی طراحی لحاف نقش‌نگار")
+  addLink("/reels", "ریلز", "data-nn-reels-link", "ویدئوهای کوتاه چهل‌تکه‌دوزی")
 }
 
 function syncSemanticHeadings() {
@@ -50,12 +55,18 @@ function syncSemanticHeadings() {
   const root = document.querySelector<HTMLElement>("#root main, #root [role='main']") ?? document.getElementById("root")
   if (!root) return
 
-  if (path === "/reels" && !root.querySelector("h1")) {
-    const heading = document.createElement("h1")
-    heading.dataset.nnRouteHeading = "true"
-    heading.textContent = "ویدئوهای کوتاه چهل‌تکه‌دوزی"
-    heading.style.cssText = "margin:0 0 1rem;font-size:clamp(1.25rem,2vw,1.75rem);font-weight:700;line-height:1.4"
-    root.prepend(heading)
+  if (path === "/reels") {
+    const synthetic = root.querySelector<HTMLElement>('h1[data-nn-route-heading="true"]')
+    const realHeadings = Array.from(root.querySelectorAll("h1")).filter((heading) => !heading.hasAttribute("data-nn-route-heading"))
+    if (realHeadings.length > 0) {
+      synthetic?.remove()
+    } else if (!synthetic) {
+      const heading = document.createElement("h1")
+      heading.dataset.nnRouteHeading = "true"
+      heading.textContent = "ویدئوهای کوتاه چهل‌تکه‌دوزی"
+      heading.style.cssText = "margin:0 0 1rem;font-size:clamp(1.25rem,2vw,1.75rem);font-weight:700;line-height:1.4"
+      root.prepend(heading)
+    }
   }
 
   if (path === "/shop/parche") {
