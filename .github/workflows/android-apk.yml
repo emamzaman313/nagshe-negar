@@ -2,13 +2,9 @@ name: Build Android APK
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'naqsh-negar-source.zip'
-      - 'source-overlay/**'
-      - 'source-overlay-b64/**'
-      - 'scripts/restore-overlay.sh'
       - '.github/workflows/android-apk.yml'
       - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
@@ -20,7 +16,6 @@ jobs:
   build-apk:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,13 +23,11 @@ jobs:
       - name: Check source archive
         run: test -f naqsh-negar-source.zip
 
-      - name: Extract project and apply upgrade overlay
+      - name: Extract project
         run: |
           mkdir -p "$RUNNER_TEMP/naqsh-negar"
           unzip -q naqsh-negar-source.zip -d "$RUNNER_TEMP/naqsh-negar"
-          bash scripts/restore-overlay.sh
           test -f "$RUNNER_TEMP/naqsh-negar/naqsh-negar/package.json"
-          node source-overlay/apply-overlay.mjs "$RUNNER_TEMP/naqsh-negar/naqsh-negar"
           echo "PROJECT_DIR=$RUNNER_TEMP/naqsh-negar/naqsh-negar" >> "$GITHUB_ENV"
 
       - name: Setup Node.js
