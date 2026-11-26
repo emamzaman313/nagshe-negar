@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { Bookmark, Heart, ImagePlus, MessageCircle, Play, Send, ShieldCheck, UserPlus, Users, Video, X } from 'lucide-react'
+import { Bookmark, Heart, ImagePlus, MessageCircle, Play, Send, Share2, ShieldCheck, UserPlus, Users, Video, X } from 'lucide-react'
 import { EmptyState } from './EmptyState'
 import { supabase, supabaseConfigured } from '../lib/supabase'
 import { validateSocialCaption, validateSocialMedia, type SocialMediaKind } from '../lib/social-validation'
@@ -11,6 +11,20 @@ type Post = Row & { author:string; url:string; likes:number; comments:number; li
 type Comment = { id:string; author_id:string; body:string; created_at:string }
 
 const faDate = (v:string) => new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v))
+async function stripImageMetadata(file:File):Promise<File> {
+  if (!file.type.startsWith('image/')) return file
+  const bitmap = await createImageBitmap(file)
+  const canvas = document.createElement('canvas')
+  canvas.width = bitmap.width
+  canvas.height = bitmap.height
+  const context = canvas.getContext('2d')
+  if (!context) { bitmap.close(); throw new Error('image-canvas-unavailable') }
+  context.drawImage(bitmap,0,0)
+  bitmap.close()
+  const blob = await new Promise<Blob>((resolve,reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error('image-encode-failed')),file.type,0.92))
+  return new File([blob],file.name,{type:blob.type,lastModified:Date.now()})
+}
+
 const message = (e:string) => e === 'file_too_large' ? 'عکس حداکثر ۱۰ و ویدئو حداکثر ۱۰۰ مگابایت است.' : e === 'unsupported_type' ? 'فرمت فایل پشتیبانی نمی‌شود.' : e === 'caption_required' ? 'توضیح اثر را بنویس.' : e === 'caption_too_long' ? 'توضیح بیش از ۲۲۰۰ نویسه است.' : 'فایل معتبر نیست.'
 
 export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels' }) {
@@ -72,6 +86,24 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     finally { setLoading(false) }
   },[tab,user,admin])
   useEffect(() => { void load() },[load])
+  useEffect(() => {
+    if (tab !== 'reels') return
+    const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('.social-grid.reels video'))
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const video = entry.target as HTMLVideoElement
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) void video.play().catch(() => undefined)
+        else video.pause()
+      })
+    },{threshold:[0,0.6,1]})
+    videos.forEach(video => observer.observe(video))
+    return () => { observer.disconnect(); videos.forEach(video => video.pause()) }
+  },[tab,posts])
+  useEffect(() => {
+    const id = window.location.hash.slice(1)
+    if (!id || !posts.length) return
+    document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'center'})
+  },[posts])
 
   function chooseFile(f:File|null) {
     setFile(f); setNotice(''); setKind(null)
@@ -86,9 +118,12 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     if (!c.ok) { setNotice(message(c.error)); return }
     if (!v.ok) { setNotice(message(v.error)); return }
     setBusy('publish')
-    const path = user + '/' + crypto.randomUUID() + '.' + v.extension
     try {
-      const up = await supabase.storage.from('qnr-social-media').upload(path,file,{contentType:file.type,upsert:false})
+      const uploadFile = kind === 'image' ? await stripImageMetadata(file) : file
+      const cleanValidation = validateSocialMedia(uploadFile)
+      if (!cleanValidation.ok) { setNotice(message(cleanValidation.error)); return }
+      const path = user + '/' + crypto.randomUUID() + '.' + cleanValidation.extension
+      const up = await supabase.storage.from('qnr-social-media').upload(path,uploadFile,{contentType:uploadFile.type,upsert:false})
       if (up.error) throw up.error
       const ins = await supabase.from('qnr_social_posts').insert({author_id:user,media_path:path,media_type:kind,caption:c.caption,visibility,status:'pending'})
       if (ins.error) { await supabase.storage.from('qnr-social-media').remove([path]); throw ins.error }
@@ -112,6 +147,16 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     if (r.error) setNotice('ذخیره انجام نشد.')
     else setPosts(a => a.map(x => x.id === p.id ? {...x,saved:!p.saved} : x))
     setBusy('')
+  }
+  async function sharePost(p:Post) {
+    const url = `${window.location.origin}/social#social-post-${p.id}`
+    try {
+      if (navigator.share) await navigator.share({title:'نقش‌نگار',text:p.caption,url})
+      else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url); setNotice('پیوند این اثر کپی شد.') }
+      else setNotice('اشتراک‌گذاری در این مرورگر پشتیبانی نمی‌شود.')
+    } catch (error) {
+      if ((error as DOMException).name !== 'AbortError') setNotice('اشتراک‌گذاری انجام نشد.')
+    }
   }
   async function follow(p:Post) {
     if (!supabase || !user) { setNotice('برای دنبال‌کردن وارد حساب شو.'); return }
@@ -165,11 +210,11 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     {notice&&<p className="social-notice" role="status">{notice}</p>}
     {error&&<p className="social-error">{error} <button onClick={()=>void load()}>تلاش دوباره</button></p>}
     {loading?<p className="social-loading">در حال آماده‌سازی فید…</p>:!posts.length?<EmptyState title={tab==='reels'?'هنوز ریلزی منتشر نشده':tab==='saved'?'اثری ذخیره نکرده‌ای':tab==='review'?'صف بررسی خالی است':'اولین اثر این فید را تو منتشر کن'} detail="با انتشار یک عکس یا ویدئو، الهام بعدی را به این جمع هدیه بده."/>:
-      <section className={'social-grid '+(tab==='reels'?'reels':'')}>{posts.map(p=><article className="social-card" key={p.id}>
+      <section className={'social-grid '+(tab==='reels'?'reels':'')}>{posts.map(p=><article className="social-card" id={`social-post-${p.id}`} key={p.id}>
         <div className="social-author"><span>{p.author.slice(0,1)}</span><div><b>{p.author}</b><small>{faDate(p.created_at)}{p.status==='pending'?' · در انتظار بررسی':''}</small></div>{tab==='review'?<em>در انتظار بررسی</em>:user&&user!==p.author_id&&<button onClick={()=>void follow(p)} disabled={busy===p.id}>{p.following?'دنبال می‌کنی':<><UserPlus size={14}/> دنبال‌کردن</>}</button>}</div>
-        {p.url?(p.media_type==='video'?<video src={p.url} controls playsInline preload="metadata"/>:<img src={p.url} alt={'اثر '+p.author} loading="lazy"/>):<div className="social-missing">رسانه در دسترس نیست</div>}
+        {p.url?(p.media_type==='video'?<video src={p.url} controls playsInline muted={tab==='reels'} preload="metadata"/>:<img src={p.url} alt={'اثر '+p.author} loading="lazy"/>):<div className="social-missing">رسانه در دسترس نیست</div>}
         <p className="social-caption">{p.caption}</p>
-        {tab==='review'?<div className="social-moderate"><button disabled={busy===p.id} onClick={()=>void moderate(p,'published')}>تأیید و انتشار</button><button disabled={busy===p.id} onClick={()=>void moderate(p,'rejected')}>رد اثر</button><button disabled={busy===p.id} onClick={()=>void moderate(p,'hidden')}>پنهان‌سازی</button></div>:<div className="social-actions"><button className={p.liked?'liked':''} onClick={()=>void like(p)} disabled={busy===p.id}><Heart size={18} fill={p.liked?'currentColor':'none'}/> {p.likes.toLocaleString('fa-IR')}</button><button onClick={()=>void openComments(p)}><MessageCircle size={18}/> {p.comments.toLocaleString('fa-IR')}</button><button className={p.saved?'saved':''} onClick={()=>void save(p)} disabled={busy===p.id}><Bookmark size={18} fill={p.saved?'currentColor':'none'}/></button>{user&&<button className="report" onClick={()=>setReportFor(p.id)}>گزارش</button>}</div>}
+        {tab==='review'?<div className="social-moderate"><button disabled={busy===p.id} onClick={()=>void moderate(p,'published')}>تأیید و انتشار</button><button disabled={busy===p.id} onClick={()=>void moderate(p,'rejected')}>رد اثر</button><button disabled={busy===p.id} onClick={()=>void moderate(p,'hidden')}>پنهان‌سازی</button></div>:<div className="social-actions"><button className={p.liked?'liked':''} onClick={()=>void like(p)} disabled={busy===p.id}><Heart size={18} fill={p.liked?'currentColor':'none'}/> {p.likes.toLocaleString('fa-IR')}</button><button onClick={()=>void openComments(p)}><MessageCircle size={18}/> {p.comments.toLocaleString('fa-IR')}</button><button onClick={()=>void sharePost(p)}><Share2 size={18}/></button><button className={p.saved?'saved':''} onClick={()=>void save(p)} disabled={busy===p.id}><Bookmark size={18} fill={p.saved?'currentColor':'none'}/></button>{user&&<button className="report" onClick={()=>setReportFor(p.id)}>گزارش</button>}</div>}
         {commentsFor===p.id&&<div className="social-comments"><div><b>دیدگاه‌ها</b><button onClick={()=>setCommentsFor('')}><X size={16}/></button></div>{comments.map(c=><p key={c.id}><b>{c.author_id===user?'شما':'هنرمند جامعه'}</b> {c.body}</p>)}{user&&<form onSubmit={sendComment}><input value={comment} onChange={e=>setComment(e.target.value)} maxLength={1200} placeholder="دیدگاهت را بنویس…"/><button disabled={!comment.trim()}><Send size={16}/></button></form>}</div>}
       </article>)}</section>}
     {reportFor&&<div className="social-backdrop"><form className="social-modal" onSubmit={report}><button type="button" onClick={()=>setReportFor('')}><X size={17}/></button><h2>گزارش اثر</h2><p>این اثر برای بررسی به مدیران گزارش می‌شود.</p><button className="social-primary">ثبت گزارش</button></form></div>}
