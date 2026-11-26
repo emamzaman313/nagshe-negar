@@ -21,6 +21,10 @@ runs:
         test -f src/app/MusicPlayer.tsx
         test -f src/app/MusicAdminPage.tsx
         test -f src/app/AdminMusicShortcut.tsx
+        test -f src/app/AdminUsersPage.tsx
+        test -f src/app/AdminUsersShortcut.tsx
+        test -f src/app/admin-users.css
+        test -f supabase/migrations/20261126171000_qnr_admin_user_role_management.sql
         test -f src/app/music.css
         test -f src/lib/music-validation.ts
         test -f supabase/migrations/20261126170000_qnr_music_admin_library.sql
@@ -43,6 +47,8 @@ runs:
         grep -q 'qnr_music_tracks' src/app/MusicAdminPage.tsx
         grep -q 'MusicPlayer' src/app/App.tsx
         grep -q 'admin/music' src/app/App.tsx
+        grep -q 'admin/users' src/app/App.tsx
+        grep -q 'qnr_admin_set_user_role' src/app/AdminUsersPage.tsx
         grep -q 'ریلز' src/app/SocialModerationAdminPage.tsx
         grep -q 'تأیید ریلز' src/app/SocialModerationAdminPage.tsx
     - name: Run dependency-free validation tests
