@@ -7,6 +7,7 @@ on:
     paths:
       - 'naqsh-negar-source.zip'
       - '.github/workflows/deploy-site.yml'
+      - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
 
 permissions:
@@ -38,12 +39,10 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Run dependency-free validation tests
-        working-directory: ${{ runner.temp }}/naqsh-negar/naqsh-negar
-        run: |
-          node --experimental-strip-types --test supabase/functions/create-order/order-lines.test.ts
-          node --experimental-strip-types --test supabase/functions/_shared/gallery-validation.test.ts
-          node --experimental-strip-types --test supabase/functions/_shared/chat-validation.test.ts
+      - name: Validate source
+        uses: ./.github/actions/validate-source
+        with:
+          project-dir: ${{ runner.temp }}/naqsh-negar/naqsh-negar
 
       - name: Configure Vite for the GitHub Pages path
         run: |
