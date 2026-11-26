@@ -21,6 +21,7 @@ runs:
         test -f supabase/migrations/20261126110000_admin_social_moderation_workflow.sql
         test -f supabase/migrations/20261126111500_harden_social_moderation_inputs.sql
         test -f supabase/migrations/20261126113000_move_social_moderation_rpc_to_private_schema.sql
+        test -f supabase/migrations/20261126103808_qnr_social_admin_media_read.sql
         test -f supabase/migrations/20261126093000_qnr_social_network.sql
         test -f supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql
         test -f supabase/migrations/20261126100341_qnr_social_acl_hardening.sql
@@ -31,6 +32,7 @@ runs:
         grep -q 'admin/social-moderation' src/app/App.tsx
         grep -q 'qnr_admin_moderate_social_content' src/app/SocialModerationAdminPage.tsx
         grep -q 'AdminSocialModerationShortcut' src/app/App.tsx
+        grep -q 'ریلزها' src/app/SocialModerationAdminPage.tsx
     - name: Run dependency-free validation tests
       shell: bash
       working-directory: ${{ inputs.project-dir }}
