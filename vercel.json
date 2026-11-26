@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": null,
-  "installCommand": "bash scripts/restore-overlay.sh && mkdir -p .vercel-build && unzip -q -o naqsh-negar-source.zip -d .vercel-build && node source-overlay/apply-overlay.mjs .vercel-build/naqsh-negar && cd .vercel-build/naqsh-negar && npm ci",
-  "buildCommand": "cd .vercel-build/naqsh-negar && npm run build",
+  "installCommand": "bash vercel-install.sh",
+  "buildCommand": "bash vercel-build.sh",
   "outputDirectory": ".vercel-build/naqsh-negar/dist",
   "rewrites": [
     { "source": "/((?!assets/).*)", "destination": "/" }
