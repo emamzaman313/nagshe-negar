@@ -6,7 +6,9 @@ on:
       - main
     paths:
       - 'naqsh-negar-source.zip'
-      - 'source-overlay.zip'
+      - 'source-overlay/**'
+      - 'source-overlay-b64/**'
+      - 'scripts/restore-overlay.sh'
       - '.github/workflows/deploy-site.yml'
       - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
@@ -32,7 +34,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/naqsh-negar"
           unzip -q naqsh-negar-source.zip -d "$RUNNER_TEMP/naqsh-negar"
-          unzip -q source-overlay.zip -d .
+          bash scripts/restore-overlay.sh
           test -f "$RUNNER_TEMP/naqsh-negar/naqsh-negar/package.json"
           test -f "$RUNNER_TEMP/naqsh-negar/naqsh-negar/vite.config.ts"
           node source-overlay/apply-overlay.mjs "$RUNNER_TEMP/naqsh-negar/naqsh-negar"
@@ -45,7 +47,7 @@ jobs:
       - name: Validate source
         uses: ./.github/actions/validate-source
         with:
-          project-dir: \${{ runner.temp }}/naqsh-negar/naqsh-negar
+          project-dir: ${{ runner.temp }}/naqsh-negar/naqsh-negar
 
       - name: Configure Vite for the GitHub Pages path
         run: |
@@ -64,10 +66,10 @@ jobs:
           PY
 
       - name: Install dependencies and build website
-        working-directory: \${{ runner.temp }}/naqsh-negar/naqsh-negar
+        working-directory: ${{ runner.temp }}/naqsh-negar/naqsh-negar
         env:
-          VITE_SUPABASE_URL: \${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: \${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           npm ci
           npm run build
@@ -81,12 +83,12 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: \${{ runner.temp }}/naqsh-negar/naqsh-negar/dist
+          path: ${{ runner.temp }}/naqsh-negar/naqsh-negar/dist
 
   deploy:
     environment:
       name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
