@@ -32,6 +32,7 @@ runs:
         grep -q 'admin/social-moderation' src/app/App.tsx
         grep -q 'qnr_admin_moderate_social_content' src/app/SocialModerationAdminPage.tsx
         grep -q 'AdminSocialModerationShortcut' src/app/App.tsx
+        grep -q 'onAuthStateChange' src/app/AdminSocialModerationShortcut.tsx
         grep -q 'ریلز' src/app/SocialModerationAdminPage.tsx
         grep -q 'تأیید ریلز' src/app/SocialModerationAdminPage.tsx
     - name: Run dependency-free validation tests
