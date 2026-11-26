@@ -74,3 +74,18 @@ Typography: Vazirmatn for Persian UI. Controls: 44px default, 36px small, 48px l
 5. Fix leaked-password protection in Supabase Auth.
 6. Finish the full admin audit: users/roles, sellers/products, orders/refunds, notifications, settings, backup/restore.
 7. Add the creator studio and collaborative quilt project workflows after the admin audit.
+
+
+## 2026-11-26 — PR16 premium visual pass 3
+
+- Branch: `design/premium-visual-pass-3`.
+- Expanded the shared craft-studio foundation: deeper layered shadows, more consistent control sizing, better focus/empty/loading surfaces, responsive spacing and reduced-motion behavior.
+- Social feed and reels: redesigned the hero as a textile-inspired editorial banner, sticky segmented navigation, richer composer, three-column desktop feed (two-column tablet, one-column mobile), tactile cards and improved dark mode.
+- Admin moderation: refined hero, metrics, sticky tabs, card hierarchy and decision actions; kept all moderation RPC and private-media behavior unchanged.
+- Fabric stash: textile-pattern swatches, more tactile inventory cards, stronger metric surfaces and responsive form treatment.
+- These are CSS-only changes applied by the existing source overlay to both web and Capacitor builds. No database schema, RLS or Storage policy changes are required.
+- Design system DS Manager advanced to version 5: radius 1rem, layered shadow ramp, 38/46/52px sm/default/lg controls, medium weight 550, focus ring offset 3px/strength 85%, and letter spacing -0.01em. Contrast audit: no failing pairs; muted foreground on muted is 5.15:1 light and 6.53:1 dark.
+- DS Manager system remains unpublished pending the user's Publish action: https://manager.shadcndesign.com/overview?publish=9307c99e-ce0d-4a1e-8fcc-740637183d81
+- Figma MCP Starter call limit was reached, so no Figma capture or editable screen changes could be completed in this pass. The existing file remains: https://www.figma.com/design/5yXin1gDXPG05rxie2rADX
+- Product Design's full screenshot-based audit requires ChatGPT Work mode; this standard chat cannot execute that workflow.
+- Webflow returned zero connected sites; no Webflow site was edited. Thrixel and GSA Per Diem are not relevant to this product's quilting UI.
