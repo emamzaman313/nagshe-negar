@@ -146,3 +146,64 @@ html.light :where(.card,.panel,.surface,.dashboard-card,.feature-card,.product-c
 body.light :where(.card,.panel,.surface,.dashboard-card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.order-card,.support-card,.settings-card,.stat-card,.admin-card){
  color:#182d29!important;background:linear-gradient(145deg,#fffdf8,#f7f4ec)!important;border-color:rgba(39,75,62,.13)!important
 }
+
+
+/* Route-specific atelier treatment: keep each existing workflow, but carry the reference mood through its real surfaces. */
+.social-page,.nn-stash-page,.nn-mod-page,.qnr-admin-users,.qnr-music-admin{color:var(--nn-ink)!important}
+.social-hero,.nn-stash-hero,.nn-mod-hero,.qnr-music-admin>header{
+ background:linear-gradient(112deg,rgba(15,18,16,.96),rgba(34,45,36,.96) 58%,rgba(67,53,34,.94))!important;
+ border:1px solid rgba(217,163,79,.24)!important;border-radius:24px!important;
+ box-shadow:var(--nn-shadow)!important;color:#f4eadb!important
+}
+.social-hero h1,.nn-stash-hero h1,.nn-mod-hero h1,.qnr-music-admin>header h1{color:#fff0d8!important}
+.social-hero p,.nn-stash-hero p,.nn-mod-hero p,.qnr-music-admin>header p{color:#c9bdab!important}
+.social-hero>div:first-child>span,.nn-stash-eyebrow{color:#e0b66f!important}
+.social-mark,.nn-stash-hero-mark{
+ background:linear-gradient(145deg,rgba(217,163,79,.22),rgba(255,255,255,.04))!important;
+ border:1px solid rgba(217,163,79,.28)!important;color:#f1c77e!important;box-shadow:inset 0 1px rgba(255,255,255,.12),0 16px 36px rgba(0,0,0,.24)!important
+}
+.social-composer,.social-signin,.social-card,.social-comments,.social-modal,
+.nn-stash-card,.nn-stash-form,.nn-stash-stats>*,.nn-mod-card,.nn-mod-report,.nn-mod-comment,
+.qnr-admin-users-card,.qnr-admin-user,.qnr-admin-audit,.qnr-music-admin-card{
+ color:var(--nn-ink)!important;background:var(--nn-surface)!important;
+ border:1px solid var(--nn-line)!important;border-radius:17px!important;box-shadow:var(--nn-shadow)!important
+}
+.social-composer:before{background:linear-gradient(90deg,#d9a34f,#6caa91,#c87855)!important}
+.social-composer textarea,.social-comments input,.social-tools select,.social-modal select,
+.nn-stash-page input,.nn-stash-page textarea,.nn-stash-page select,
+.qnr-admin-users input,.qnr-admin-users select,.qnr-music-admin input,.qnr-music-admin select{
+ color:#f2e9dc!important;background:#151815!important;border-color:var(--nn-line)!important
+}
+.social-tools label,.social-tabs button,.social-author button,.social-author em,.social-actions button,
+.social-moderate button,.social-admin-link,.nn-stash-toolbar button,.nn-stash-actions button,
+.nn-mod-tabs button,.nn-mod-actions button,.qnr-admin-users-tabs button{
+ color:#e8ddcc!important;background:rgba(255,255,255,.055)!important;border:1px solid var(--nn-line)!important
+}
+.social-tabs button.active,.nn-mod-tabs button.active,.qnr-admin-users-tabs button.active{
+ color:#ffe0a8!important;background:rgba(183,121,48,.2)!important;border-color:rgba(217,163,79,.38)!important
+}
+.social-author>span,.nn-stash-swatch,.nn-mod-media,.nn-mod-reported-media{
+ border:1px solid var(--nn-line)!important
+}
+.social-caption,.social-comments p,.nn-stash-meta,.nn-stash-notes-text,.nn-mod-body,.nn-mod-meta{color:#d2c7b7!important}
+.social-comments,.nn-stash-empty,.nn-mod-empty,.nn-mod-loading{background:rgba(255,255,255,.035)!important;color:#d9cfbf!important}
+.social-actions .liked{color:#ef8c83!important}.social-actions .saved{color:#9ed1a9!important}
+.social-primary,.nn-stash-add,.nn-mod-actions .approve,.qnr-admin-users button.primary{
+ color:#24190d!important;background:linear-gradient(135deg,#f0c77e,#c9873f)!important;border:1px solid rgba(255,230,181,.5)!important
+}
+.social-error,.nn-stash-error,.nn-mod-message.error{background:rgba(164,67,59,.16)!important;color:#ffb5aa!important}
+.social-notice,.nn-stash-success,.nn-mod-message.success{background:rgba(74,132,91,.16)!important;color:#b7e2bd!important}
+.qnr-admin-users-tabs,.nn-mod-tabs{border-color:var(--nn-line)!important}
+.qnr-admin-role-chips span,.nn-mod-stats>*{background:rgba(217,163,79,.1)!important;color:#eac27f!important;border:1px solid rgba(217,163,79,.2)!important}
+.qnr-music-admin-track{border-color:var(--nn-line)!important;color:#eee4d5!important}
+.qnr-music-admin button{background:linear-gradient(135deg,#e9bd70,#c9873f)!important;color:#251b10!important}
+.nn-stash-swatch{border-radius:13px!important;box-shadow:inset 0 1px rgba(255,255,255,.18),0 8px 22px rgba(0,0,0,.18)}
+.nn-stash-quantity strong{color:#f1c77e!important}
+.nn-stash-icon-button,.nn-stash-actions button{border-radius:10px!important}
+.nn-mod-card,.nn-mod-report,.nn-mod-comment{overflow:hidden}
+.nn-mod-actions button{border-radius:10px!important}
+@media(max-width:740px){
+ .social-hero,.nn-stash-hero,.nn-mod-hero{border-radius:18px!important}
+ .social-mark,.nn-stash-hero-mark{width:76px!important;height:76px!important}
+ .nn-stash-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
