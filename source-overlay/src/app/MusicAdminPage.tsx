@@ -1,11 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Music2, Pause, Play, RefreshCw, UploadCloud } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { validateMusicAudio, validateMusicCover } from '../lib/music-validation'
 import './music.css'
 
 type Track={id:string;title:string;artist:string;album:string|null;audio_path:string;cover_path:string|null;file_size_bytes:number;status:string;published_at:string|null}
-const MAX=50*1024*1024
-const types=['audio/mpeg','audio/mp4','audio/aac','audio/ogg','audio/wav','audio/flac']
 export function MusicAdminPage(){
  const [user,setUser]=useState<string|null>(null),[admin,setAdmin]=useState(false),[ready,setReady]=useState(false)
  const [tracks,setTracks]=useState<Track[]>([]),[defaultId,setDefaultId]=useState(''),[enabled,setEnabled]=useState(true)
@@ -24,8 +23,9 @@ export function MusicAdminPage(){
  async function upload(e:FormEvent){
   e.preventDefault();if(!supabase||!user||!audio)return
   if(!title.trim()||!artist.trim()||!rightsHolder.trim()||!rights){setNotice('عنوان، هنرمند، صاحب حق و تأیید مجوز الزامی است.');return}
-  if(audio.size>MAX||!types.includes(audio.type)){setNotice('فایل باید فرمت صوتی مجاز و حداکثر ۵۰ مگابایت باشد.');return}
-  if(cover&&(!['image/jpeg','image/png','image/webp'].includes(cover.type)||cover.size>5*1024*1024)){setNotice('کاور باید JPG، PNG یا WebP و حداکثر ۵ مگابایت باشد.');return}
+  const audioCheck=validateMusicAudio(audio),coverCheck=validateMusicCover(cover)
+  if(!audioCheck.ok){setNotice('فایل باید فرمت صوتی مجاز و حداکثر ۵۰ مگابایت باشد.');return}
+  if(!coverCheck.ok){setNotice('کاور باید JPG، PNG یا WebP و حداکثر ۵ مگابایت باشد.');return}
   setBusy(true);setNotice('')
   const id=crypto.randomUUID(),ext=audio.name.split('.').pop()?.toLowerCase()||'audio',audioPath=`library/${id}/track.${ext}`,coverPath=cover?`library/${id}/cover.${cover.name.split('.').pop()?.toLowerCase()||'jpg'}`:null
   try{
