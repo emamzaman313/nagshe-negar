@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "framework": null,
+  "installCommand": "unzip -q -o source-overlay.zip -d . && mkdir -p .vercel-build && unzip -q -o naqsh-negar-source.zip -d .vercel-build && node source-overlay/apply-overlay.mjs .vercel-build/naqsh-negar && cd .vercel-build/naqsh-negar && npm ci",
+  "buildCommand": "cd .vercel-build/naqsh-negar && npm run build",
+  "outputDirectory": ".vercel-build/naqsh-negar/dist",
+  "rewrites": [
+    { "source": "/((?!assets/).*)", "destination": "/" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ]
+}

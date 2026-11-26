@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'naqsh-negar-source.zip'
+      - 'source-overlay.zip'
       - '.github/workflows/android-apk.yml'
       - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
@@ -22,18 +23,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check source archive
+      - name: Check source archives
         run: |
           test -f naqsh-negar-source.zip || {
             echo "::error::Source ZIP not found"
             exit 1
           }
+          test -f source-overlay.zip || {
+            echo "::error::Source overlay ZIP not found"
+            exit 1
+          }
 
-      - name: Extract project
+      - name: Extract project and apply upgrade overlay
         run: |
           mkdir -p "$RUNNER_TEMP/naqsh-negar"
           unzip -q naqsh-negar-source.zip -d "$RUNNER_TEMP/naqsh-negar"
+          unzip -q source-overlay.zip -d .
           test -f "$RUNNER_TEMP/naqsh-negar/naqsh-negar/package.json"
+          node source-overlay/apply-overlay.mjs "$RUNNER_TEMP/naqsh-negar/naqsh-negar"
           echo "PROJECT_DIR=$RUNNER_TEMP/naqsh-negar/naqsh-negar" >> "$GITHUB_ENV"
 
       - name: Setup Node.js
@@ -44,7 +51,7 @@ jobs:
       - name: Validate source
         uses: ./.github/actions/validate-source
         with:
-          project-dir: ${{ env.PROJECT_DIR }}
+          project-dir: \${{ env.PROJECT_DIR }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -53,20 +60,20 @@ jobs:
           java-version: '21'
 
       - name: Install dependencies and build
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: \${{ env.PROJECT_DIR }}
         env:
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: \${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: \${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           npm ci
           npm run build
 
       - name: Sync Android
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: \${{ env.PROJECT_DIR }}
         run: npx cap sync android
 
       - name: Build APK
-        working-directory: ${{ env.PROJECT_DIR }}/android
+        working-directory: \${{ env.PROJECT_DIR }}/android
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
@@ -75,6 +82,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: naqsh-negar-debug-apk
-          path: ${{ env.PROJECT_DIR }}/android/app/build/outputs/apk/debug/app-debug.apk
+          path: \${{ env.PROJECT_DIR }}/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
