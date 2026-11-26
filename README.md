@@ -30,7 +30,7 @@
 - مهاجرت Supabase با جدول‌های مستقل، RLS و bucket خصوصی qnr-social-media
 - پاک‌سازی فرادادهٔ EXIF تصاویر پیش از بارگذاری
 
-**نکتهٔ عملیاتی:** فایل مهاجرت فاز اول در source-overlay/supabase/migrations/20261126093000_qnr_social_network.sql است. این مهاجرت تا زمان فعال‌شدن پروژهٔ Supabase نقش‌نگار اجرا نشده است.
+**نکتهٔ عملیاتی:** فایل مهاجرت فاز اول در source-overlay/supabase/migrations/20261126093000_qnr_social_network.sql است. سه مهاجرت اجتماعی در Supabase پروژهٔ نقش‌نگار اجرا شده‌اند و در ledger ثبت شده‌اند: شبکهٔ اجتماعی، ایندکس‌ها و سخت‌سازی ACL. وضعیت دقیق را با `supabase migration list` بررسی کنید.
 
 ## متغیرهای محیطی
 
