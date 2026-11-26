@@ -35,6 +35,7 @@
 - 20261126152326_qnr_music_platform_20261126
 - 20261126152656_qnr_music_foreign_key_indexes
 - 20261126152845_qnr_music_public_playlist_read
+- 20261126153231_qnr_music_social_soundtrack_guard
 
 ## محدودیت‌ها / فاز بعدی
 - نمایش موسیقی منتخب در صفحهٔ پروفایل اصلی هنوز باید متصل شود.

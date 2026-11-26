@@ -27,7 +27,8 @@ for (const entry of [
   'supabase/migrations/20261126113000_move_social_moderation_rpc_to_private_schema.sql',
   'supabase/migrations/20261126152326_qnr_music_platform_20261126.sql',
   'supabase/migrations/20261126152656_qnr_music_foreign_key_indexes.sql',
-  'supabase/migrations/20261126152845_qnr_music_public_playlist_read.sql'
+  'supabase/migrations/20261126152845_qnr_music_public_playlist_read.sql',
+  'supabase/migrations/20261126153231_qnr_music_social_soundtrack_guard.sql'
 ]) {
   const source = join(overlayRoot, entry)
   const target = join(projectDir, entry)
