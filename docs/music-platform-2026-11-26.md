@@ -18,7 +18,7 @@
 - qnr_profile_music: قطعهٔ منتخب پروفایل با سطح دسترسی.
 - qnr_music_preferences: فعال/غیرفعال بودن، ولوم، آخرین track و position.
 - qnr_music_audit: تاریخچهٔ تغییر track.
-- qnr_social_posts.soundtrack_track_id: ارتباط اختیاری رسانه با قطعه.
+- qnr_social_posts.soundtrack_track_id: اتصال اختیاری قطعه به ویدئوی اجتماعی؛ انتخاب قطعهٔ مجاز اکنون در composer ویدئو وجود دارد.
 
 ## امنیت و انتشار
 - Storage private است؛ فایل عمومی به‌صورت public URL سرو نمی‌شود.
@@ -37,7 +37,6 @@
 - 20261126152845_qnr_music_public_playlist_read
 
 ## محدودیت‌ها / فاز بعدی
-- اتصال UI پست/ریلز به soundtrack_track_id هنوز کامل نشده است.
 - نمایش موسیقی منتخب در صفحهٔ پروفایل اصلی هنوز باید متصل شود.
 - مدیریت ترتیب و حذف track از playlist و پخش پشت‌سرهم playlist باید تکمیل شود.
 - upload progress و resumable upload برای فایل‌های بزرگ هنوز در UI وجود ندارد؛ فعلاً از upload استاندارد Storage استفاده می‌شود.
