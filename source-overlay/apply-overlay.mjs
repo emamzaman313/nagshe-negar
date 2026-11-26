@@ -14,6 +14,8 @@ for (const entry of [
   'src/app/SocialModerationAdminPage.tsx', 'src/app/AdminSocialModerationShortcut.tsx', 'src/app/social-moderation-admin.css',
   'src/app/FabricStashPage.tsx', 'src/app/fabric-stash.css',
   'src/app/MusicPlayer.tsx', 'src/app/MusicAdminPage.tsx', 'src/app/AdminMusicShortcut.tsx', 'src/app/music.css',
+  'src/app/AdminUsersPage.tsx', 'src/app/AdminUsersShortcut.tsx', 'src/app/admin-users.css',
+  'supabase/migrations/20261126171000_qnr_admin_user_role_management.sql',
   'supabase/migrations/20261126170000_qnr_music_admin_library.sql',
   'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts',
   'src/lib/music-validation.ts', 'supabase/functions/_shared/music-validation.test.ts',
@@ -51,6 +53,8 @@ const SocialModerationAdminPage = lazy(() => import('./SocialModerationAdminPage
 const FabricStashPage = lazy(() => import('./FabricStashPage').then(m => ({ default: m.FabricStashPage })))
 const MusicPlayer = lazy(() => import('./MusicPlayer').then(m => ({ default: m.MusicPlayer })))
 const MusicAdminPage = lazy(() => import('./MusicAdminPage').then(m => ({ default: m.MusicAdminPage })))
+const AdminUsersPage = lazy(() => import('./AdminUsersPage').then(m => ({ default: m.AdminUsersPage })))
+import { AdminUsersShortcut } from './AdminUsersShortcut'
 import { AdminMusicShortcut } from './AdminMusicShortcut'
 import { AdminSocialModerationShortcut } from './AdminSocialModerationShortcut'
 import './premium-foundation.css'
@@ -60,7 +64,7 @@ import './route-metadata'`)
 replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/stash', label: 'انبار پارچه', Icon: Package },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
 replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n", "")
 replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/admin/social-moderation', 'مدیریت جامعه'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
-replaceOnce("        <Route path=\"/admin\" element={<AdminPage />} />", "        <Route path=\"/admin\" element={<><AdminMusicShortcut /><AdminSocialModerationShortcut /><AdminPage /></>} />")
+replaceOnce("        <Route path=\"/admin\" element={<AdminPage />} />", "        <Route path=\"/admin\" element={<><AdminUsersShortcut /><AdminMusicShortcut /><AdminSocialModerationShortcut /><AdminPage /></>} />")
 replaceOnce("        <Route path=\"/admin/*\" element={<AdminPage />} />", "        <Route path=\"/admin/*\" element={<><AdminSocialModerationShortcut /><AdminPage /></>} />")
 replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/admin/music\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری استودیوی صوتی…</div>}><MusicAdminPage /></Suspense>} />\n        <Route path=\"/social\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری جامعه…</div>}><SocialPage /></Suspense>} />\n        <Route path=\"/reels\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری ریلز…</div>}><SocialPage initialTab=\"reels\" /></Suspense>} />\n        <Route path=\"/admin/social-moderation\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری مدیریت…</div>}><SocialModerationAdminPage /></Suspense>} />\n        <Route path=\"/stash\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری انبار پارچه…</div>}><FabricStashPage /></Suspense>} />")
 const routesCount = (app.match(/<Routes\b/g) ?? []).length
