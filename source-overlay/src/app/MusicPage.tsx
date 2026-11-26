@@ -307,7 +307,7 @@ export function MusicPage() {
         <p className="nn-music-hint">پس از انتخاب پلی‌لیست، از دکمهٔ + کنار هر قطعه در کتابخانه برای افزودن آن استفاده کن.</p>
         {selectedPlaylist && <section className="nn-music-playlist-items">
           <div className="nn-music-section-head"><div><span className="nn-music-kicker">NOW IN PLAYLIST</span><h3>قطعه‌های فهرست انتخاب‌شده</h3></div><button className="nn-music-primary" onClick={playPlaylist} disabled={!playlistTracks.length}><Play size={15}/> پخش پشت‌سرهم</button></div>
-          {playlistTracks.length===0?<p className="nn-music-hint">هنوز قطعه‌ای به این پلی‌لیست اضافه نشده است.</p>:playlistTracks.map(({item,track},index)=><div className="nn-music-playlist-item" key={track.id}>
+          {playlistTracks.length===0?<p className="nn-music-hint">هنوز قطعه‌ای به این پلی‌لیست اضافه نشده است.</p>:playlistTracks.map(({track},index)=><div className="nn-music-playlist-item" key={track.id}>
             <span className="nn-music-playlist-number">{(index+1).toLocaleString('fa-IR')}</span><div><strong>{track.title}</strong><small>{track.artist}</small></div>
             <button onClick={()=>playTrack(track)} aria-label="پخش قطعه"><Play size={15}/></button>
             {selectedPlaylistOwned && <><button onClick={()=>void movePlaylistTrack(track.id,-1)} disabled={index===0} aria-label="انتقال به بالا">↑</button>
