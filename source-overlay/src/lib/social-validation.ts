@@ -1,6 +1,7 @@
+export type SocialMediaKind = 'image' | 'video'
 export type SocialMediaFile = { name: string; type: string; size: number }
 export type SocialMediaValidation =
-  | { ok: true; mediaType: 'image' | 'video'; mimeType: string; extension: string }
+  | { ok: true; kind: SocialMediaKind; mediaType: SocialMediaKind; mimeType: string; extension: string }
   | { ok: false; error: 'unsupported_type' | 'too_large' | 'invalid_extension' }
 
 const MIME_EXTENSIONS: Record<string, string[]> = {
@@ -23,9 +24,11 @@ export function validateSocialMedia(file: SocialMediaFile): SocialMediaValidatio
   if (file.size > limit) return { ok: false, error: 'too_large' }
   const extension = file.name.split('.').pop()?.toLowerCase() ?? ''
   if (!extensions.includes(extension)) return { ok: false, error: 'invalid_extension' }
+  const kind: SocialMediaKind = file.type.startsWith('video/') ? 'video' : 'image'
   return {
     ok: true,
-    mediaType: file.type.startsWith('video/') ? 'video' : 'image',
+    kind,
+    mediaType: kind,
     mimeType: file.type,
     extension: extension === 'jpeg' ? 'jpg' : extension,
   }
@@ -36,4 +39,13 @@ export function normalizeSocialCaption(value: string) {
   if (!caption) return { ok: false as const, error: 'empty' as const }
   if (caption.length > 2200) return { ok: false as const, error: 'too_long' as const }
   return { ok: true as const, caption }
+}
+
+export function validateSocialCaption(value: string) {
+  const result = normalizeSocialCaption(value)
+  if (result.ok) return result
+  return {
+    ok: false as const,
+    error: result.error === 'empty' ? 'caption_required' as const : 'caption_too_long' as const,
+  }
 }
