@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'naqsh-negar-source.zip'
+      - 'source-overlay/**'
       - '.github/workflows/deploy-site.yml'
       - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
@@ -38,6 +39,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Apply social overlay
+        run: node source-overlay/apply-overlay.mjs "$RUNNER_TEMP/naqsh-negar/naqsh-negar"
+
       - name: Validate source
         uses: ./.github/actions/validate-source
         with:
@@ -62,8 +66,8 @@ jobs:
       - name: Install dependencies and build website
         working-directory: ${{ runner.temp }}/naqsh-negar/naqsh-negar
         env:
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://jnccbdgtdrbufzemmnod.supabase.co' }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_-x7BZmxRXVDkQdy2XcC0ww_d5Zbtf8Y' }}
         run: |
           npm ci
           npm run build
