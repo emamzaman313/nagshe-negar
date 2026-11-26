@@ -9,7 +9,7 @@ runs:
   steps:
     - name: Check required project files
       shell: bash
-      working-directory: \${{ inputs.project-dir }}
+      working-directory: ${{ inputs.project-dir }}
       run: |
         test -f package.json
         test -f supabase/functions/create-order/order-lines.test.ts
@@ -20,7 +20,7 @@ runs:
         test -f supabase/migrations/20261126093000_qnr_social_network.sql
     - name: Run dependency-free validation tests
       shell: bash
-      working-directory: \${{ inputs.project-dir }}
+      working-directory: ${{ inputs.project-dir }}
       run: |
         node --experimental-strip-types --test supabase/functions/create-order/order-lines.test.ts
         node --experimental-strip-types --test supabase/functions/_shared/gallery-validation.test.ts
