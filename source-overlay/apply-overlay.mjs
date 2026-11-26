@@ -9,7 +9,7 @@ if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
 }
 for (const entry of [
   'src/app/premium-foundation.css', 'src/app/visual-interactions.ts', 'src/app/route-metadata.ts',
-  'public/robots.txt', 'public/sitemap.xml',
+  'public/robots.txt', 'public/sitemap.xml', 'public/quilt-studio-preview.html', 'public/assets/quilt-blocks/eight-point-star-preview.png',
   'src/app/SocialPage.tsx', 'src/app/social.css',
   'src/app/SocialModerationAdminPage.tsx', 'src/app/AdminSocialModerationShortcut.tsx', 'src/app/social-moderation-admin.css',
   'src/app/FabricStashPage.tsx', 'src/app/fabric-stash.css',
