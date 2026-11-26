@@ -193,7 +193,7 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     const action = status === 'published' ? 'approve' : status === 'rejected' ? 'reject' : 'hide'
     const reason = action === 'approve' ? null : window.prompt(action === 'reject' ? 'دلیل رد این اثر را بنویس:' : 'دلیل پنهان‌سازی این اثر را بنویس:')
     if (action !== 'approve' && reason === null) return
-    if (action !== 'approve' && !reason.trim()) { setNotice('برای رد یا پنهان‌سازی، ثبت دلیل الزامی است.'); return }
+    if (action !== 'approve' && (!reason || !reason.trim())) { setNotice('برای رد یا پنهان‌سازی، ثبت دلیل الزامی است.'); return }
     setBusy(p.id)
     const r = await supabase.rpc('qnr_admin_moderate_social_content',{
       p_target_type:'post',p_target_id:p.id,p_action:action,p_reason:reason?.trim() || null
