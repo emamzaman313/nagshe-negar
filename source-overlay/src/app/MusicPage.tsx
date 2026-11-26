@@ -26,12 +26,6 @@ const formatSize = (n:number) => n < 1024*1024 ? Math.ceil(n/1024)+' KB' : (n/10
 const formatTime = (n:number|null) => n ? new Intl.NumberFormat('fa-IR').format(Math.floor(n/60))+':'+String(Math.floor(n%60)).padStart(2,'0') : '—'
 const errorText = (e:unknown) => e instanceof Error ? e.message : 'خطای نامشخص'
 
-async function signed(path:string|null) {
-  if (!path || !supabase) return ''
-  const {data,error} = await supabase.storage.from('qnr-music').createSignedUrl(path,14400)
-  if (error) return ''
-  return data.signedUrl
-}
 function playTrack(track:Track) {
   window.dispatchEvent(new CustomEvent('nn:music-play',{detail:{track,url:track.audio_url}}))
 }
@@ -80,11 +74,14 @@ export function MusicPage() {
     try {
       const {data,error} = await supabase.from('qnr_music_tracks')
         .select('id,owner_id,title,artist,album,genre,description,audio_path,cover_path,duration_seconds,mime_type,file_size_bytes,sha256,license_type,license_url,rights_holder,rights_confirmed,source,visibility,status,moderation_note,created_at,published_at')
-        .order('created_at',{ascending:false}).limit(100)
+        .order('created_at',{ascending:false}).limit(50)
       if (error) throw error
-      const hydrated = await Promise.all(((data ?? []) as TrackRow[]).map(async row => ({
-        ...row,audio_url:await signed(row.audio_path),cover_url:await signed(row.cover_path)
-      })))
+      const rows = (data ?? []) as TrackRow[]
+      const storagePaths = rows.flatMap(row => [row.audio_path,...(row.cover_path?[row.cover_path]:[])])
+      const signedResponse = storagePaths.length ? await supabase.storage.from('qnr-music').createSignedUrls(storagePaths,14400) : {data:[],error:null}
+      if (signedResponse.error) throw signedResponse.error
+      const urlMap = new Map((signedResponse.data ?? []).filter(item => item.signedUrl).map(item => [item.path,item.signedUrl]))
+      const hydrated = rows.map(row => ({...row,audio_url:urlMap.get(row.audio_path)??'',cover_url:row.cover_path?urlMap.get(row.cover_path)??'':''}))
       setTracks(hydrated)
       if (user) {
         const [pl,pm] = await Promise.all([

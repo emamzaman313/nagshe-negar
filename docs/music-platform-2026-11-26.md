@@ -7,7 +7,7 @@
 - پخش‌کننده: یک React root مستقل از Router؛ با تغییر مسیر صفحه از بین نمی‌رود.
 - Backend: Supabase Postgres با RLS و Storage خصوصی.
 - فایل‌ها: bucket خصوصی qnr-music، حداکثر ۵۰ MiB، فرمت‌های MP3/M4A/AAC/OGG/WAV/FLAC و کاور JPG/PNG/WebP.
-- Playback: لینک امضاشدهٔ چهار ساعته برای کتابخانه و player.
+- Playback: لینک امضاشدهٔ چهار ساعته برای حداکثر ۵۰ قطعهٔ اخیر؛ مسیرهای صوت و کاور به‌صورت batch امضا می‌شوند تا تعداد درخواست‌های Storage کاهش یابد.
 - یکپارچگی فایل: SHA-256 هنگام بارگذاری.
 - پلتفرم: وب و Android از کد React/Capacitor مشترک build می‌شوند؛ پخش پس‌زمینهٔ واقعی در Android هنگام بسته‌شدن اپ هنوز نیازمند MediaSession/Foreground Service بومی است.
 
