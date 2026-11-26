@@ -8,3 +8,13 @@
 .nn-mod-report,.nn-mod-comment{grid-template-columns:1fr auto;align-items:center}.nn-mod-report h2{font-size:18px;margin:10px 0}.nn-mod-report p,.nn-mod-report small,.nn-mod-comment small{color:#728178}.nn-mod-report blockquote{margin:10px 0;padding:10px 14px;border-right:3px solid #d7a34c;background:#fbf8ef;border-radius:8px}.nn-mod-reason{display:inline-block;background:#fff1db;color:#875d1b;padding:5px 10px;border-radius:20px;font-size:12px}.nn-mod-comment .nn-mod-meta .hidden{color:#a43c31}.nn-mod-comment .nn-mod-meta .visible{color:#21633c}.nn-mod-comment .nn-mod-actions{max-width:260px}.nn-mod-comment .nn-mod-actions textarea{min-height:55px}
 .nn-mod-empty,.nn-mod-loading{padding:54px 20px;text-align:center;background:#fff;border:1px dashed #cbd8ce;border-radius:20px;color:#62746a}.nn-mod-empty h2,.nn-mod-empty h1{color:#214b3a}.nn-mod-empty svg{width:32px;height:32px;color:#5c9470}.nn-mod-empty a{display:inline-block;margin-top:12px;color:#286b4a}
 @media(max-width:760px){.nn-mod-page{padding:14px}.nn-mod-hero{align-items:flex-start;flex-direction:column;padding:22px}.nn-mod-card,.nn-mod-report,.nn-mod-comment{grid-template-columns:1fr}.nn-mod-media{min-height:180px}.nn-mod-tabs{display:grid;grid-template-columns:1fr}.nn-mod-tabs button{justify-content:space-between}.nn-mod-comment .nn-mod-actions{max-width:none}}
+
+.nn-mod-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}
+.nn-mod-stats article{display:grid;gap:8px;padding:17px 19px;border:1px solid #e1e9df;border-radius:17px;background:linear-gradient(145deg,#fffdf8,#f4f7f0);box-shadow:0 8px 22px #183d3208}
+.nn-mod-stats span{font-size:12px;color:#6c7e72}
+.nn-mod-stats strong{font-size:26px;color:#214b3a;font-weight:850}
+.nn-mod-reported-media{display:flex;align-items:center;gap:14px;margin:14px 0;padding:12px;border:1px solid #e5e9df;border-radius:14px;background:#f7f8f2}
+.nn-mod-reported-media img,.nn-mod-reported-media video{width:150px;height:112px;object-fit:cover;border-radius:10px;background:#1d332b}
+.nn-mod-reported-media>div{display:grid;gap:6px}
+.nn-mod-reported-media small{color:#728178;overflow-wrap:anywhere}
+@media(max-width:760px){.nn-mod-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.nn-mod-stats article{padding:13px}.nn-mod-reported-media{align-items:flex-start;flex-direction:column}.nn-mod-reported-media img,.nn-mod-reported-media video{width:100%;height:180px}}
