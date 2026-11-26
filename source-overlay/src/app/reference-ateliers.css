@@ -207,3 +207,66 @@ body.light :where(.card,.panel,.surface,.dashboard-card,.feature-card,.product-c
  .social-mark,.nn-stash-hero-mark{width:76px!important;height:76px!important}
  .nn-stash-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+
+/* Phase 3: interaction, accessibility and responsive finish */
+:root{
+ --nn-space-1:4px;--nn-space-2:8px;--nn-space-3:12px;--nn-space-4:16px;
+ --nn-space-5:20px;--nn-space-6:24px;--nn-space-8:32px;--nn-space-10:40px;
+ --nn-control-height:44px;--nn-card-padding:clamp(14px,1.5vw,22px);
+ --nn-content-max:1440px;--nn-motion-fast:120ms;--nn-motion-base:220ms;
+ --nn-motion-slow:360ms;--nn-ease:cubic-bezier(.2,.75,.25,1);
+ --nn-ring:0 0 0 3px color-mix(in srgb,var(--nn-gold) 28%,transparent);
+}
+:where(button,[role="button"],input,textarea,select){font:inherit}
+:where(button,[role="button"],a){-webkit-tap-highlight-color:transparent}
+:where(button,[role="button"],input,textarea,select,a):focus-visible{
+ outline:2px solid var(--nn-gold)!important;outline-offset:3px!important;box-shadow:var(--nn-ring)!important
+}
+:where(button,[role="button"]):disabled,[aria-disabled="true"]{
+ cursor:not-allowed!important;opacity:.52;filter:saturate(.55);transform:none!important
+}
+:where(button,[role="button"]):active:not(:disabled){transform:translateY(1px) scale(.985)}
+:where(input:not([type=checkbox]):not([type=radio]),textarea,select){
+ min-height:var(--nn-control-height);max-width:100%;padding:10px 13px
+}
+:where(input[type=checkbox],input[type=radio]){accent-color:var(--nn-jade);width:18px;height:18px}
+:where(.card,.panel,.surface,.dashboard-card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.order-card,.support-card,.settings-card,.stat-card,.admin-card,.social-card,.nn-stash-card,.nn-mod-card){
+ padding:var(--nn-card-padding);min-width:0;overflow-wrap:anywhere
+}
+:where(.card,.panel,.surface,.dashboard-card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.order-card,.support-card,.settings-card,.stat-card,.admin-card,.social-card,.nn-stash-card,.nn-mod-card):focus-within{
+ border-color:color-mix(in srgb,var(--nn-gold) 42%,var(--nn-line))!important
+}
+:where(.site-header,.header-inner,.main-content,.desktop-nav,.site-footer){min-width:0}
+:where(.main-content img,.main-content video,.main-content iframe){max-width:100%}
+:where(.main-content table){display:block;max-width:100%;overflow-x:auto}
+:where(.main-content pre){max-width:100%;overflow:auto}
+:where(.main-content h1,.main-content h2,.main-content h3,.main-content p,.main-content a,.main-content button){overflow-wrap:anywhere}
+:where(.toast,.notification-toast,[role="status"],[role="alert"]){max-width:min(92vw,440px)}
+:where(.modal,.dialog,.drawer,[role="dialog"]){max-width:calc(100vw - 24px);max-height:calc(100svh - 24px);overflow:auto}
+:where(.modal-backdrop,.dialog-backdrop,.drawer-backdrop){overscroll-behavior:contain}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
+body{padding-bottom:env(safe-area-inset-bottom)}
+@media(max-width:760px){
+ .site-header{padding-top:env(safe-area-inset-top)}
+ .main-content{padding-inline:max(11px,env(safe-area-inset-left)) max(11px,env(safe-area-inset-right))}
+ :where(.site-header button,.desktop-nav a,.mobile-nav a,.bottom-nav a,.main-content button){min-height:44px}
+ :where(.main-content .grid,.main-content [class*="grid"]){min-width:0}
+ :where(.main-content .card,.main-content .panel){max-width:100%}
+ .qnr-music-player{bottom:max(10px,env(safe-area-inset-bottom))!important}
+}
+@media(hover:hover) and (pointer:fine){
+ :where(.card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.stat-card,.admin-card,.social-card):hover{
+  transform:translateY(-3px);transition:transform var(--nn-motion-base) var(--nn-ease),border-color var(--nn-motion-base) var(--nn-ease),box-shadow var(--nn-motion-base) var(--nn-ease)
+ }
+}
+@media(hover:none){
+ :where(.card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.stat-card,.admin-card,.social-card):active{transform:scale(.995)}
+}
+[dir="rtl"] :where(.desktop-nav a,.sidebar a,.app-sidebar a,.side-nav a){text-align:right}
+[dir="rtl"] .desktop-nav a.active,[dir="rtl"] .sidebar a.active{box-shadow:inset -3px 0 #e4ad58,inset 3px 0 transparent}
+[dir="ltr"] .desktop-nav a.active,[dir="ltr"] .sidebar a.active{box-shadow:inset 3px 0 #e4ad58}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ :where(*,*::before,*::after){animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
