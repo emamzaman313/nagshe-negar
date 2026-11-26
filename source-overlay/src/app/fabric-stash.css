@@ -36,3 +36,23 @@
 .nn-stash-form{border-radius:26px}
 @media(max-width:620px){.nn-stash-hero{min-height:180px;border-radius:22px}.nn-stash-swatch{height:82px}}
 @media(prefers-reduced-motion:reduce){.nn-stash-card,.nn-stash-stats article{transition:none}}
+
+
+:root[data-theme="dark"] .nn-stash-page,html.dark .nn-stash-page,body.dark .nn-stash-page{color:#e8f0e9}
+:root[data-theme="dark"] .nn-stash-stats article,html.dark .nn-stash-stats article,body.dark .nn-stash-stats article,
+:root[data-theme="dark"] .nn-stash-card,html.dark .nn-stash-card,body.dark .nn-stash-card{background:linear-gradient(145deg,#203329,#19291f);border-color:#3a5141;color:#e8f0e9}
+:root[data-theme="dark"] .nn-stash-stats strong,html.dark .nn-stash-stats strong,body.dark .nn-stash-stats strong,
+:root[data-theme="dark"] .nn-stash-quantity,html.dark .nn-stash-quantity,body.dark .nn-stash-quantity{color:#b8d8c2}
+:root[data-theme="dark"] .nn-stash-stats span,html.dark .nn-stash-stats span,body.dark .nn-stash-stats span,
+:root[data-theme="dark"] .nn-stash-meta,html.dark .nn-stash-meta,body.dark .nn-stash-meta{color:#a8b9ac}
+:root[data-theme="dark"] .nn-stash-search,html.dark .nn-stash-search,body.dark .nn-stash-search{background:#1a2b21;border-color:#3b5545}
+:root[data-theme="dark"] .nn-stash-search input,html.dark .nn-stash-search input,body.dark .nn-stash-search input{color:#edf4ed}
+:root[data-theme="dark"] .nn-stash-form,html.dark .nn-stash-form,body.dark .nn-stash-form{background:#1b2b22;border-color:#435a49;color:#e8f0e9}
+:root[data-theme="dark"] .nn-stash-form-head h2,html.dark .nn-stash-form-head h2,body.dark .nn-stash-form-head h2{color:#e8f0e9}
+:root[data-theme="dark"] .nn-stash-form-grid label,html.dark .nn-stash-form-grid label,body.dark .nn-stash-form-grid label{color:#c4d5c7}
+:root[data-theme="dark"] .nn-stash-form input,html.dark .nn-stash-form input,body.dark .nn-stash-form input,
+:root[data-theme="dark"] .nn-stash-form select,html.dark .nn-stash-form select,body.dark .nn-stash-form select,
+:root[data-theme="dark"] .nn-stash-form textarea,html.dark .nn-stash-form textarea,body.dark .nn-stash-form textarea{background:#24382b;color:#edf4ed;border-color:#435a49}
+:root[data-theme="dark"] .nn-stash-empty,html.dark .nn-stash-empty,body.dark .nn-stash-empty{background:radial-gradient(circle at 50% 0%,#263e30,#1a2a20 70%);border-color:#486651;color:#b8cabb}
+:root[data-theme="dark"] .nn-stash-empty h1,html.dark .nn-stash-empty h1,body.dark .nn-stash-empty h1,
+:root[data-theme="dark"] .nn-stash-empty h2,html.dark .nn-stash-empty h2,body.dark .nn-stash-empty h2{color:#e5efe5}
