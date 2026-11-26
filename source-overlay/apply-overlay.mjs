@@ -17,16 +17,14 @@ const appPath = join(projectDir, 'src/app/App.tsx')
 let app = readFileSync(appPath, 'utf8')
 function replaceOnce(before, after) {
   const occurrences = app.split(before).length - 1
-  if (occurrences !== 1) throw new Error(`Expected one App.tsx anchor, found ${occurrences}: ${before.slice(0, 90)}`)
+  if (occurrences !== 1) throw new Error('Expected one App.tsx anchor, found ' + occurrences + ': ' + before.slice(0, 90))
   app = app.replace(before, after)
 }
 replaceOnce(
-  "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, X } from 'lucide-react'
-import './premium-foundation.css'
-import './visual-interactions'",
+  "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, X } from 'lucide-react'",
   "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, X } from 'lucide-react'",
 )
-replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { SocialPage } from './SocialPage'")
+replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { SocialPage } from './SocialPage'\nimport './premium-foundation.css'\nimport './visual-interactions'")
 replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
 replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n", "")
 replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
