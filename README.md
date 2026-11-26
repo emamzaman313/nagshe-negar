@@ -58,6 +58,22 @@ cd android
 
 برای ساخت وب در Vercel، vercel.json همین مراحل را خودکار اجرا می‌کند. GitHub Actions نیز overlay را قبل از تست و ساخت اعمال می‌کند.
 
+## استودیوی موسیقی — فاز اول
+
+- کتابخانهٔ صوتی با فرادادهٔ مالکیت و مجوز انتشار
+- بارگذاری خصوصی MP3، M4A، AAC، OGG، WAV و FLAC تا ۵۰ مگابایت
+- SHA-256 برای کنترل یکپارچگی فایل
+- انتشار فقط پس از بررسی مدیر؛ فایل‌ها در bucket خصوصی qnr-music باقی می‌مانند
+- پخش‌کنندهٔ سراسری مستقل از مسیریابی، با پخش/توقف، ولوم، seek، جمع‌شدن و جابه‌جایی
+- تنظیم موسیقی پروفایل با سطح دسترسی عمومی/دنبال‌کنندگان/خصوصی
+- پلی‌لیست‌های شخصی و عمومی
+- تنظیمات پخش کاربر و ثبت audit تغییرات موسیقی
+- انتخاب موسیقی مجاز برای ویدئوی اجتماعی و اتصال metadata soundtrack با guard دیتابیسی
+
+حقوق موسیقی: هیچ قطعهٔ تجاری بدون مجوز وارد نشده است. کاربر هنگام بارگذاری باید صاحب اثر یا دارندهٔ مجوز باشد؛ مدیر پیش از انتشار مدرک را بررسی می‌کند. فعلاً هیچ سرویس پخش ثالث یا API پولی متصل نیست.
+
+Migrationها: source-overlay/supabase/migrations/20261126152326_qnr_music_platform_20261126.sql و source-overlay/supabase/migrations/20261126152656_qnr_music_foreign_key_indexes.sql و source-overlay/supabase/migrations/20261126152845_qnr_music_public_playlist_read.sql و source-overlay/supabase/migrations/20261126153231_qnr_music_social_soundtrack_guard.sql و source-overlay/supabase/migrations/20261126153433_qnr_music_genre_metadata.sql.
+
 ## نقشهٔ ادامهٔ توسعه
 
 1. تکمیل پروفایل عمومی، اعلان‌های اجتماعی و تعامل زنده

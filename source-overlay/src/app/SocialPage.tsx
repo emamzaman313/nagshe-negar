@@ -45,12 +45,23 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
   const [caption,setCaption] = useState(''), [file,setFile] = useState<File|null>(null), [kind,setKind] = useState<SocialMediaKind|null>(null)
   const [visibility,setVisibility] = useState<'public'|'followers'>('public'), [busy,setBusy] = useState(''), [commentsFor,setCommentsFor] = useState('')
   const [comments,setComments] = useState<Comment[]>([]), [comment,setComment] = useState(''), [reportFor,setReportFor] = useState('')
+  const [soundtracks,setSoundtracks] = useState<{id:string;title:string;artist:string}[]>([])
+  const [soundtrackTrackId,setSoundtrackTrackId] = useState('')
 
   useEffect(() => {
     if (!supabase) return
     supabase.auth.getSession().then(({data}) => setUser(data.session?.user.id ?? null))
     const {data} = supabase.auth.onAuthStateChange((_e,s) => setUser(s?.user.id ?? null))
     return () => data.subscription.unsubscribe()
+  },[])
+  useEffect(() => {
+    if (!supabase) return
+    let active = true
+    supabase.from('qnr_music_tracks').select('id,title,artist')
+      .eq('status','published').eq('visibility','public')
+      .order('published_at',{ascending:false}).limit(50)
+      .then(({data}) => { if (active) setSoundtracks((data ?? []) as {id:string;title:string;artist:string}[]) })
+    return () => { active = false }
   },[])
   useEffect(() => {
     if (!supabase || !user) { setAdmin(false); return }
@@ -139,9 +150,9 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
       const path = user + '/' + crypto.randomUUID() + '.' + cleanValidation.extension
       const up = await supabase.storage.from('qnr-social-media').upload(path,uploadFile,{contentType:uploadFile.type,upsert:false})
       if (up.error) throw up.error
-      const ins = await supabase.from('qnr_social_posts').insert({author_id:user,media_path:path,media_type:kind,caption:c.caption,visibility,status:'pending'})
+      const ins = await supabase.from('qnr_social_posts').insert({author_id:user,media_path:path,media_type:kind,caption:c.caption,visibility,status:'pending',soundtrack_track_id:kind==='video'?(soundtrackTrackId||null):null})
       if (ins.error) { await supabase.storage.from('qnr-social-media').remove([path]); throw ins.error }
-      setCaption(''); setFile(null); setKind(null); setNotice('اثر برای بررسی مدیر ارسال شد؛ پس از تأیید در فید نمایش داده می‌شود.')
+      setCaption(''); setFile(null); setKind(null); setSoundtrackTrackId(''); setNotice('اثر برای بررسی مدیر ارسال شد؛ پس از تأیید در فید نمایش داده می‌شود.')
       await load()
     } catch { setNotice('ارسال اثر انجام نشد؛ دوباره تلاش کن.') }
     finally { setBusy('') }
@@ -245,7 +256,7 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
     {user ? <form className="social-composer" onSubmit={publish}>
       <b>اثر تازه‌ات را به جامعه نشان بده</b><textarea value={caption} onChange={e=>setCaption(e.target.value)} maxLength={2200} placeholder="از الهام، پارچه‌ها یا داستان پشت اثرت بنویس…"/>
       {file && <div className="social-file">{kind === 'video' ? <Video size={16}/> : <ImagePlus size={16}/>} {file.name}<button type="button" onClick={()=>chooseFile(null)}><X size={16}/></button></div>}
-      <div className="social-tools"><label><ImagePlus size={17}/> افزودن عکس یا ویدئو<input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" onChange={e=>chooseFile(e.target.files?.[0] ?? null)}/></label><select value={visibility} onChange={e=>setVisibility(e.target.value as 'public'|'followers')}><option value="public">نمایش عمومی</option><option value="followers">فقط دنبال‌کنندگان</option></select><button className="social-primary" disabled={busy==='publish'||!file||!caption.trim()}>{busy==='publish'?'در حال ارسال…':'ارسال برای بررسی'} <Send size={16}/></button></div>
+      <div className="social-tools"><label><ImagePlus size={17}/> افزودن عکس یا ویدئو<input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" onChange={e=>chooseFile(e.target.files?.[0] ?? null)}/></label>{kind==='video'&&<select aria-label="موسیقی ویدئو" value={soundtrackTrackId} onChange={e=>setSoundtrackTrackId(e.target.value)}><option value="">بدون موسیقی افزوده</option>{soundtracks.map(track=><option key={track.id} value={track.id}>{track.title} — {track.artist}</option>)}</select>}<select value={visibility} onChange={e=>setVisibility(e.target.value as 'public'|'followers')}><option value="public">نمایش عمومی</option><option value="followers">فقط دنبال‌کنندگان</option></select><button className="social-primary" disabled={busy==='publish'||!file||!caption.trim()}>{busy==='publish'?'در حال ارسال…':'ارسال برای بررسی'} <Send size={16}/></button></div>
       <small>عکس تا ۱۰ و ویدئو تا ۱۰۰ مگابایت؛ رسانه‌ها خصوصی ذخیره و پس از تأیید مدیر منتشر می‌شوند.</small>
     </form> : <section className="social-signin"><b>به جمع هنرمندان نقش‌نگار بپیوند</b><p>برای انتشار اثر، پسندیدن و گفت‌وگو وارد حساب شو.</p><a href="/account">ورود و ثبت‌نام</a></section>}
     <nav className="social-tabs"><button className={tab==='feed'?'active':''} onClick={()=>setTab('feed')}><Users size={16}/> فید آثار</button><button className={tab==='reels'?'active':''} onClick={()=>setTab('reels')}><Play size={16}/> ریلز</button><button className={tab==='saved'?'active':''} onClick={()=>setTab('saved')}><Bookmark size={16}/> ذخیره‌شده‌ها</button>{admin&&<><button className={tab==='review'?'active':''} onClick={()=>setTab('review')}><ShieldCheck size={16}/> صف مدیریت</button><a className="social-admin-link" href="/admin/social-moderation"><ShieldCheck size={16}/> مرکز مدیریت جامعه</a></>}</nav>
