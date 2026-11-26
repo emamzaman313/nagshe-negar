@@ -18,6 +18,12 @@ runs:
         test -f src/app/SocialModerationAdminPage.tsx
         test -f src/app/AdminSocialModerationShortcut.tsx
         test -f src/app/social-moderation-admin.css
+        test -f src/app/MusicPlayer.tsx
+        test -f src/app/MusicAdminPage.tsx
+        test -f src/app/AdminMusicShortcut.tsx
+        test -f src/app/music.css
+        test -f src/lib/music-validation.ts
+        test -f supabase/migrations/20261126170000_qnr_music_admin_library.sql
         test -f supabase/migrations/20261126110000_admin_social_moderation_workflow.sql
         test -f supabase/migrations/20261126111500_harden_social_moderation_inputs.sql
         test -f supabase/migrations/20261126113000_move_social_moderation_rpc_to_private_schema.sql
@@ -33,6 +39,10 @@ runs:
         grep -q 'qnr_admin_moderate_social_content' src/app/SocialModerationAdminPage.tsx
         grep -q 'AdminSocialModerationShortcut' src/app/App.tsx
         grep -q 'onAuthStateChange' src/app/AdminSocialModerationShortcut.tsx
+        grep -q 'qnr_music_platform_settings' src/app/MusicPlayer.tsx
+        grep -q 'qnr_music_tracks' src/app/MusicAdminPage.tsx
+        grep -q 'MusicPlayer' src/app/App.tsx
+        grep -q 'admin/music' src/app/App.tsx
         grep -q 'ریلز' src/app/SocialModerationAdminPage.tsx
         grep -q 'تأیید ریلز' src/app/SocialModerationAdminPage.tsx
     - name: Run dependency-free validation tests
@@ -43,3 +53,4 @@ runs:
         node --experimental-strip-types --test supabase/functions/_shared/gallery-validation.test.ts
         node --experimental-strip-types --test supabase/functions/_shared/chat-validation.test.ts
         node --experimental-strip-types --test supabase/functions/_shared/social-validation.test.ts
+        node --experimental-strip-types --test supabase/functions/_shared/music-validation.test.ts
