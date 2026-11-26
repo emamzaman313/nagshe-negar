@@ -7,7 +7,7 @@
   if (reduced || !fine) return;
   let frame = 0, x = 0.5, y = 0.22;
   const paint = () => { frame = 0; root.style.setProperty('--nn-pointer-x', (x * 100) + '%'); root.style.setProperty('--nn-pointer-y', (y * 100) + '%'); };
-  const move = (event) => {
+  const move = (event: PointerEvent) => {
     if (event.pointerType === 'touch') return;
     x = Math.max(0, Math.min(1, event.clientX / Math.max(1, window.innerWidth)));
     y = Math.max(0, Math.min(1, event.clientY / Math.max(1, window.innerHeight)));
