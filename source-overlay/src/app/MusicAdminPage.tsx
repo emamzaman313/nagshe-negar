@@ -9,7 +9,7 @@ const types=['audio/mpeg','audio/mp4','audio/aac','audio/ogg','audio/wav','audio
 export function MusicAdminPage(){
  const [user,setUser]=useState<string|null>(null),[admin,setAdmin]=useState(false),[ready,setReady]=useState(false)
  const [tracks,setTracks]=useState<Track[]>([]),[defaultId,setDefaultId]=useState(''),[enabled,setEnabled]=useState(true)
- const [title,setTitle]=useState(''),[artist,setArtist]=useState(''),[album,setAlbum]=useState(''),[rightsHolder,setRightsHolder]=useState(''),[license,setLicense]=useState('original'),[rights,setRights]=useState(false)
+ const [title,setTitle]=useState(''),[artist,setArtist]=useState(''),[album,setAlbum]=useState(''),[rightsHolder,setRightsHolder]=useState(''),[license,setLicense]=useState('original'),[licenseUrl,setLicenseUrl]=useState(''),[rights,setRights]=useState(false)
  const [audio,setAudio]=useState<File|null>(null),[cover,setCover]=useState<File|null>(null),[busy,setBusy]=useState(false),[notice,setNotice]=useState('')
 
  useEffect(()=>{if(!supabase){setReady(true);return}supabase.auth.getUser().then(({data})=>{setUser(data.user?.id??null);setReady(true)})},[])
@@ -32,9 +32,9 @@ export function MusicAdminPage(){
    const up=await supabase.storage.from('qnr-music').upload(audioPath,audio,{contentType:audio.type,upsert:false})
    if(up.error)throw up.error
    if(coverPath&&cover){const c=await supabase.storage.from('qnr-music').upload(coverPath,cover,{contentType:cover.type,upsert:false});if(c.error)throw c.error}
-   const row=await supabase.from('qnr_music_tracks').insert({id,owner_id:user,title:title.trim(),artist:artist.trim(),album:album.trim()||null,audio_path:audioPath,cover_path:coverPath,mime_type:audio.type,file_size_bytes:audio.size,license_type:license,rights_holder:rightsHolder.trim(),rights_confirmed:true,source:'admin_library',visibility:'public',status:'published',published_at:new Date().toISOString()})
+   const row=await supabase.from('qnr_music_tracks').insert({id,owner_id:user,title:title.trim(),artist:artist.trim(),album:album.trim()||null,audio_path:audioPath,cover_path:coverPath,mime_type:audio.type,file_size_bytes:audio.size,license_type:license,license_url:licenseUrl.trim()||null,rights_holder:rightsHolder.trim(),rights_confirmed:true,source:'admin_library',visibility:'public',status:'published',published_at:new Date().toISOString()})
    if(row.error)throw row.error
-   setTitle('');setArtist('');setAlbum('');setRightsHolder('');setRights(false);setAudio(null);setCover(null);setNotice('آهنگ به کتابخانه مرکزی اضافه شد.');await load()
+   setTitle('');setArtist('');setAlbum('');setRightsHolder('');setLicenseUrl('');setRights(false);setAudio(null);setCover(null);setNotice('آهنگ به کتابخانه مرکزی اضافه شد.');await load()
   }catch(err){await supabase.storage.from('qnr-music').remove([audioPath,...(coverPath?[coverPath]:[])]);setNotice('بارگذاری انجام نشد؛ مجوز مدیر و تنظیمات فایل را بررسی کن.')}
   finally{setBusy(false)}
  }
@@ -52,7 +52,7 @@ export function MusicAdminPage(){
  return <main className="qnr-music-admin">
   <header><span><Music2/> استودیوی صوتی نقش‌نگار</span><h1>مدیریت موسیقی</h1><p>کتابخانه مرکزی، آهنگ پیش‌فرض و تجربه پخش کاربران را مدیریت کن.</p></header>
   <section className="qnr-music-admin-card"><h2><UploadCloud/> افزودن آهنگ به کتابخانه</h2><form onSubmit={upload}>
-   <div className="qnr-music-form-grid"><label>عنوان آهنگ<input required maxLength={120} value={title} onChange={e=>setTitle(e.target.value)}/></label><label>هنرمند / سازنده<input required maxLength={120} value={artist} onChange={e=>setArtist(e.target.value)}/></label><label>آلبوم (اختیاری)<input maxLength={120} value={album} onChange={e=>setAlbum(e.target.value)}/></label><label>صاحب حق اثر<input required maxLength={160} value={rightsHolder} onChange={e=>setRightsHolder(e.target.value)}/></label><label>نوع مجوز<select value={license} onChange={e=>setLicense(e.target.value)}><option value="original">اثر اصلی</option><option value="cc0">CC0</option><option value="public-domain">مالکیت عمومی</option><option value="licensed">دارای مجوز</option></select></label></div>
+   <div className="qnr-music-form-grid"><label>عنوان آهنگ<input required maxLength={120} value={title} onChange={e=>setTitle(e.target.value)}/></label><label>هنرمند / سازنده<input required maxLength={120} value={artist} onChange={e=>setArtist(e.target.value)}/></label><label>آلبوم (اختیاری)<input maxLength={120} value={album} onChange={e=>setAlbum(e.target.value)}/></label><label>صاحب حق اثر<input required maxLength={160} value={rightsHolder} onChange={e=>setRightsHolder(e.target.value)}/></label><label>نوع مجوز<select value={license} onChange={e=>setLicense(e.target.value)}><option value="original">اثر اصلی</option><option value="cc0">CC0</option><option value="public-domain">مالکیت عمومی</option><option value="licensed">دارای مجوز</option></select></label>{['cc-by','cc-by-sa','licensed'].includes(license)&&<label>پیوند مجوز<input required type="url" value={licenseUrl} onChange={e=>setLicenseUrl(e.target.value)} placeholder="https://…"/></label>}</div>
    <label className="qnr-music-file">فایل صوتی (حداکثر ۵۰ مگابایت)<input required type="file" accept="audio/mpeg,audio/mp4,audio/aac,audio/ogg,audio/wav,audio/flac" onChange={e=>setAudio(e.target.files?.[0]??null)}/></label>
    <label className="qnr-music-file">کاور (اختیاری، حداکثر ۵ مگابایت)<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>setCover(e.target.files?.[0]??null)}/></label>
    <label className="qnr-music-check"><input type="checkbox" checked={rights} onChange={e=>setRights(e.target.checked)}/> تأیید می‌کنم حق انتشار و پخش این اثر را دارم.</label>
