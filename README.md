@@ -5,7 +5,8 @@
 ## ساختار مخزن
 
 - naqsh-negar-source.zip — بستهٔ اصلی کد وب و Android.
-- source-overlay.zip — لایهٔ تغییرات نسخهٔ اجتماعی؛ CI و Vercel آن را پس از استخراج بستهٔ اصلی اعمال می‌کنند.
+- source-overlay/ — لایهٔ تغییرات نسخهٔ اجتماعی؛ CI و Vercel آن را پس از استخراج بستهٔ اصلی اعمال می‌کنند.
+- source-overlay-b64/ — بستهٔ فشردهٔ overlay در قطعه‌های base64 که با scripts/restore-overlay.sh بازیابی می‌شود.
 - .github/workflows/ — ساخت APK و انتشار GitHub Pages.
 - vercel.json — فرمان‌های ساخت Vercel برای استخراج و ساخت بستهٔ اصلی به‌همراه overlay.
 - docs/ — ممیزی فنی و نقشهٔ توسعه.
@@ -21,8 +22,6 @@
 
 ## ارتقای اجتماعی — فاز اول
 
-این فاز در source-overlay.zip نگهداری می‌شود و شامل موارد زیر است:
-
 - فید اجتماعی برای آثار کاربران
 - انتشار تصویر تا ۱۰ مگابایت و ویدئو تا ۱۰۰ مگابایت
 - لایک، دیدگاه، دنبال‌کردن و ذخیرهٔ پست
@@ -31,7 +30,7 @@
 - مهاجرت Supabase با جدول‌های مستقل، RLS و bucket خصوصی qnr-social-media
 - پاک‌سازی فرادادهٔ EXIF تصاویر پیش از بارگذاری
 
-**نکتهٔ عملیاتی:** فایل مهاجرت فاز اول در supabase/migrations/20261126093000_qnr_social_network.sql داخل بستهٔ overlay است. این مهاجرت تا زمان فعال‌شدن پروژهٔ Supabase نقش‌نگار اجرا نشده است.
+**نکتهٔ عملیاتی:** فایل مهاجرت فاز اول در source-overlay/supabase/migrations/20261126093000_qnr_social_network.sql است. این مهاجرت تا زمان فعال‌شدن پروژهٔ Supabase نقش‌نگار اجرا نشده است.
 
 ## متغیرهای محیطی
 
@@ -47,7 +46,7 @@
 پس از استخراج naqsh-negar-source.zip:
 
 ~~~bash
-unzip -q source-overlay.zip -d .
+bash scripts/restore-overlay.sh
 node source-overlay/apply-overlay.mjs ./naqsh-negar
 cd naqsh-negar
 npm ci
