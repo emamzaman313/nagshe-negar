@@ -5,10 +5,12 @@ import { supabase } from '../lib/supabase'
 import './music.css'
 
 type Track = {id:string;title:string;artist:string;audio_path:string;cover_path:string|null;audio_url?:string;cover_url?:string;duration_seconds?:number|null}
-type PlayEvent = CustomEvent<{track:Track;url:string}>
+type QueueItem = {track:Track;url:string}
+type PlayEvent = CustomEvent<{track:Track;url:string;queue?:QueueItem[]}>
 const STORAGE_KEY='nn-music-player-v1'
 function GlobalMusicPlayer() {
   const audio=useRef<HTMLAudioElement>(null)
+  const queue=useRef<QueueItem[]>([])
   const [track,setTrack]=useState<Track|null>(null)
   const [userId,setUserId]=useState<string|null>(null)
   const [playing,setPlaying]=useState(false)
@@ -58,6 +60,7 @@ function GlobalMusicPlayer() {
       const detail=(event as PlayEvent).detail
       if(!detail?.track||!detail.url)return
       if(!enabled){setNotice('موسیقی در تنظیمات پخش‌کننده غیرفعال است.');return}
+      queue.current=detail.queue??[]
       setTrack({...detail.track,audio_url:detail.url})
       setNotice('')
       const el=audio.current
@@ -76,7 +79,13 @@ function GlobalMusicPlayer() {
   },[userId,volume,enabled,track?.id])
   useEffect(()=>{
     const onTime=()=>{if(audio.current){setCurrent(audio.current.currentTime);setDuration(audio.current.duration||0)}}
-    const onEnded=()=>{setPlaying(false);setCurrent(0)}
+    const onEnded=()=>{
+      const next=queue.current.shift()
+      if(next&&audio.current){
+        setTrack({...next.track,audio_url:next.url});setCurrent(0);audio.current.src=next.url;audio.current.load()
+        void audio.current.play().then(()=>setPlaying(true)).catch(()=>{setPlaying(false);setNotice('پخش قطعهٔ بعدی به تعامل دوباره نیاز دارد.')})
+      }else{setPlaying(false);setCurrent(0)}
+    }
     const onError=()=>{setPlaying(false);setNotice('پخش این فایل ممکن نیست؛ اتصال یا سلامت فایل صوتی را بررسی کن.')}
     const el=audio.current
     if(!el)return

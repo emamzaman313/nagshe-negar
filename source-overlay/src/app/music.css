@@ -98,3 +98,14 @@
 @media(max-width:600px){.nn-music-page{width:calc(100% - 24px);margin-top:14px;gap:20px}.nn-music-hero{grid-template-columns:1fr;min-height:unset;padding:26px 22px 190px;border-radius:24px}.nn-music-orbit{position:absolute;width:155px;bottom:14px;left:calc(50% - 78px)}.nn-music-hero h1{font-size:36px}.nn-music-track-grid{grid-template-columns:1fr}.nn-music-form-grid{grid-template-columns:1fr}.nn-music-form-grid .wide{grid-column:auto}.nn-music-profile-setting{grid-template-columns:1fr}.nn-music-create-playlist{grid-template-columns:1fr}.nn-music-review-card{align-items:flex-start;flex-direction:column}.nn-global-player{right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:calc(100vw - 24px)}.nn-global-player[style*="left"]{width:min(300px,calc(100vw - 16px))}}
 @media(prefers-reduced-motion:reduce){.nn-music-disc{animation:none}.nn-music-page *{scroll-behavior:auto!important;transition:none!important}}
 @media(prefers-color-scheme:dark){.nn-global-player{background:rgba(25,39,32,.96);color:#edf4eb;border-color:#ffffff20}.nn-player-meta span,.nn-player-timeline,.nn-player-volume{color:#a9b9ab}.nn-player-icon{color:#d4e3d6}}
+
+.nn-music-playlist-items{margin-top:24px;padding:20px;border:1px solid var(--nn-music-line);border-radius:20px;background:#f7f8f2}
+.nn-music-playlist-items .nn-music-section-head h3{font-size:18px;color:#315c47;margin:5px 0}
+.nn-music-playlist-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:8px 0;border:1px solid var(--nn-music-line);border-radius:13px;background:#fffdf9}
+.nn-music-playlist-item>span{width:28px;height:28px;border-radius:9px;background:#e8f0e6;color:#477f65;display:grid;place-items:center;font-size:11px;font-weight:900}
+.nn-music-playlist-item>div{display:grid;gap:4px;flex:1;min-width:0}
+.nn-music-playlist-item strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nn-music-playlist-item small{font-size:10px;color:#829086}
+.nn-music-playlist-item button{width:30px;height:30px;border:1px solid var(--nn-music-line);border-radius:9px;background:#fff;color:#416d55;cursor:pointer;display:grid;place-items:center}
+.nn-music-playlist-item button:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:600px){.nn-music-playlist-items{padding:13px}.nn-music-playlist-item{gap:6px;padding:8px}.nn-music-playlist-item button{width:27px;height:27px}}

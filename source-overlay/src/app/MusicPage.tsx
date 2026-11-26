@@ -58,6 +58,7 @@ export function MusicPage() {
   const [playlistTitle,setPlaylistTitle] = useState('')
   const [playlistVisibility,setPlaylistVisibility] = useState<'private'|'public'>('private')
   const [selectedPlaylist,setSelectedPlaylist] = useState('')
+  const [playlistItems,setPlaylistItems] = useState<{track_id:string;position:number}[]>([])
   const [profileTrack,setProfileTrack] = useState('')
   const [profileVisibility,setProfileVisibility] = useState<'public'|'followers'|'private'>('public')
 
@@ -91,6 +92,7 @@ export function MusicPage() {
         ])
         if (pl.error) throw pl.error
         setPlaylists((pl.data ?? []) as Playlist[])
+        if (!selectedPlaylist && pl.data?.length) setSelectedPlaylist(pl.data[0].id)
         setProfileTrack(pm.data?.track_id ?? '')
         setProfileVisibility((pm.data?.visibility as any) ?? 'public')
       } else {
@@ -102,7 +104,16 @@ export function MusicPage() {
     } finally { setLoading(false) }
   },[user])
   useEffect(() => { void load() },[load])
+  useEffect(() => {
+    if (!supabase || !selectedPlaylist) { setPlaylistItems([]); return }
+    let active = true
+    supabase.from('qnr_music_playlist_items').select('track_id,position').eq('playlist_id',selectedPlaylist).order('position',{ascending:true})
+      .then(({data}) => { if (active) setPlaylistItems((data ?? []) as {track_id:string;position:number}[]) })
+    return () => { active = false }
+  },[selectedPlaylist])
 
+  const playlistTracks = useMemo(() => playlistItems.map(item => ({item,track:tracks.find(t=>t.id===item.track_id)})).filter((x): x is {item:{track_id:string;position:number};track:Track} => Boolean(x.track)),[playlistItems,tracks])
+  const selectedPlaylistOwned = playlists.some(p=>p.id===selectedPlaylist&&p.owner_id===user)
   const visibleTracks = useMemo(() => tracks.filter(t =>
     tab==='review' ? admin && t.status==='pending' :
     tab==='my' ? t.owner_id===user :
@@ -169,19 +180,43 @@ export function MusicPage() {
     e.preventDefault()
     if (!supabase || !user || !playlistTitle.trim()) return
     setBusy('playlist')
-    const {error} = await supabase.from('qnr_music_playlists').insert({owner_id:user,title:playlistTitle.trim(),visibility:playlistVisibility})
+    const {data,error} = await supabase.from('qnr_music_playlists').insert({owner_id:user,title:playlistTitle.trim(),visibility:playlistVisibility}).select('id').single()
     if (error) setNotice('ساخت پلی‌لیست ناموفق بود: '+error.message)
-    else { setPlaylistTitle('');setNotice('پلی‌لیست ساخته شد.');await load() }
+    else { setPlaylistTitle('');setSelectedPlaylist(data.id);setNotice('پلی‌لیست ساخته شد.');await load() }
     setBusy('')
   }
   async function addToPlaylist(track:Track) {
     if (!supabase || !user || !selectedPlaylist) { setNotice('ابتدا یکی از پلی‌لیست‌ها را انتخاب کن.'); return }
+    if (!selectedPlaylistOwned) { setNotice('برای افزودن قطعه، پلی‌لیست خودت را انتخاب کن.'); return }
     setBusy(track.id)
     const {data:existing} = await supabase.from('qnr_music_playlist_items').select('position').eq('playlist_id',selectedPlaylist)
     const position = (existing ?? []).reduce((m:any,x:any)=>Math.max(m,Number(x.position)||0),-1)+1
     const {error} = await supabase.from('qnr_music_playlist_items').insert({playlist_id:selectedPlaylist,track_id:track.id,position,added_by:user})
     setNotice(error ? 'افزودن قطعه ناموفق بود: '+error.message : 'قطعه به پلی‌لیست اضافه شد.')
     setBusy('')
+  }
+  async function removePlaylistTrack(trackId:string) {
+    if (!supabase || !selectedPlaylist) return
+    const {error} = await supabase.from('qnr_music_playlist_items').delete().eq('playlist_id',selectedPlaylist).eq('track_id',trackId)
+    if (error) setNotice('حذف قطعه از پلی‌لیست انجام نشد.')
+    else setPlaylistItems(items=>items.filter(item=>item.track_id!==trackId))
+  }
+  async function movePlaylistTrack(trackId:string,direction:-1|1) {
+    if (!supabase || !selectedPlaylist) return
+    const index=playlistItems.findIndex(item=>item.track_id===trackId), next=index+direction
+    if(index<0||next<0||next>=playlistItems.length)return
+    const current=playlistItems[index], adjacent=playlistItems[next]
+    const [a,b]=await Promise.all([
+      supabase.from('qnr_music_playlist_items').update({position:adjacent.position}).eq('playlist_id',selectedPlaylist).eq('track_id',current.track_id),
+      supabase.from('qnr_music_playlist_items').update({position:current.position}).eq('playlist_id',selectedPlaylist).eq('track_id',adjacent.track_id)
+    ])
+    if(a.error||b.error) setNotice('تغییر ترتیب پلی‌لیست انجام نشد؛ دوباره تلاش کن.')
+    else setPlaylistItems(items=>items.map(item=>item.track_id===current.track_id?{...item,position:adjacent.position}:item.track_id===adjacent.track_id?{...item,position:current.position}:item).sort((x,y)=>x.position-y.position))
+  }
+  function playPlaylist() {
+    const queue=playlistTracks.filter(x=>x.track.audio_url).map(x=>({track:x.track,url:x.track.audio_url}))
+    if(!queue.length){setNotice('این پلی‌لیست هنوز قطعهٔ قابل پخشی ندارد.');return}
+    window.dispatchEvent(new CustomEvent('nn:music-play-queue',{detail:{track:queue[0].track,url:queue[0].url,queue:queue.slice(1)}}))
   }
   async function setProfile() {
     if (!supabase || !user || !profileTrack) return
@@ -270,6 +305,16 @@ export function MusicPage() {
         <form className="nn-music-create-playlist" onSubmit={createPlaylist}><input value={playlistTitle} onChange={e=>setPlaylistTitle(e.target.value)} placeholder="نام پلی‌لیست جدید" maxLength={100} required/><select value={playlistVisibility} onChange={e=>setPlaylistVisibility(e.target.value as any)}><option value="private">خصوصی</option><option value="public">عمومی</option></select><button className="nn-music-primary" disabled={busy==='playlist'}><Plus size={16}/> ساخت پلی‌لیست</button></form>
         <div className="nn-music-playlist-list">{playlists.map(p=><article key={p.id}><span className="nn-music-playlist-art"><Disc3/></span><div><strong>{p.title}</strong><small>{p.visibility==='public'?'عمومی':'خصوصی'} · {p.owner_id===user?'ساختهٔ من':'اشتراکی'}</small></div><button onClick={()=>setSelectedPlaylist(p.id)} className={selectedPlaylist===p.id?'selected':''}>{selectedPlaylist===p.id?'انتخاب شد':'انتخاب'}</button></article>)}</div>
         <p className="nn-music-hint">پس از انتخاب پلی‌لیست، از دکمهٔ + کنار هر قطعه در کتابخانه برای افزودن آن استفاده کن.</p>
+        {selectedPlaylist && <section className="nn-music-playlist-items">
+          <div className="nn-music-section-head"><div><span className="nn-music-kicker">NOW IN PLAYLIST</span><h3>قطعه‌های فهرست انتخاب‌شده</h3></div><button className="nn-music-primary" onClick={playPlaylist} disabled={!playlistTracks.length}><Play size={15}/> پخش پشت‌سرهم</button></div>
+          {playlistTracks.length===0?<p className="nn-music-hint">هنوز قطعه‌ای به این پلی‌لیست اضافه نشده است.</p>:playlistTracks.map(({item,track},index)=><div className="nn-music-playlist-item" key={track.id}>
+            <span className="nn-music-playlist-number">{(index+1).toLocaleString('fa-IR')}</span><div><strong>{track.title}</strong><small>{track.artist}</small></div>
+            <button onClick={()=>playTrack(track)} aria-label="پخش قطعه"><Play size={15}/></button>
+            {selectedPlaylistOwned && <><button onClick={()=>void movePlaylistTrack(track.id,-1)} disabled={index===0} aria-label="انتقال به بالا">↑</button>
+            <button onClick={()=>void movePlaylistTrack(track.id,1)} disabled={index===playlistTracks.length-1} aria-label="انتقال به پایین">↓</button>
+            <button onClick={()=>void removePlaylistTrack(track.id)} aria-label="حذف از پلی‌لیست"><X size={15}/></button></>}
+          </div>)}
+        </section>}
       </>}
     </section>}
 

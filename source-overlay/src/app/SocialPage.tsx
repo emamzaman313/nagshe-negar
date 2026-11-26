@@ -45,6 +45,8 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
   const [caption,setCaption] = useState(''), [file,setFile] = useState<File|null>(null), [kind,setKind] = useState<SocialMediaKind|null>(null)
   const [visibility,setVisibility] = useState<'public'|'followers'>('public'), [busy,setBusy] = useState(''), [commentsFor,setCommentsFor] = useState('')
   const [comments,setComments] = useState<Comment[]>([]), [comment,setComment] = useState(''), [reportFor,setReportFor] = useState('')
+  const [soundtracks,setSoundtracks] = useState<{id:string;title:string;artist:string}[]>([])
+  const [soundtrackTrackId,setSoundtrackTrackId] = useState('')
 
   useEffect(() => {
     if (!supabase) return
