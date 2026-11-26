@@ -12,7 +12,7 @@ const reasonLabel:Record<string,string>={spam:'هرزنامه',harassment:'آز�
 
 export function SocialModerationAdminPage(){
  const [user,setUser]=useState<string|null>(null),[admin,setAdmin]=useState(false),[authReady,setAuthReady]=useState(false)
- const [tab,setTab]=useState<'posts'|'reports'|'comments'>('posts')
+ const [tab,setTab]=useState<'posts'|'reels'|'reports'|'comments'>('posts')
  const [posts,setPosts]=useState<Post[]>([]),[reports,setReports]=useState<Report[]>([]),[comments,setComments]=useState<Comment[]>([])
  const [loading,setLoading]=useState(true),[busy,setBusy]=useState(''),[error,setError]=useState(''),[notice,setNotice]=useState('')
  const [reasons,setReasons]=useState<Record<string,string>>({})
@@ -84,19 +84,21 @@ export function SocialModerationAdminPage(){
  if(!authReady||loading)return <main className="nn-mod-page"><div className="nn-mod-loading">در حال بررسی دسترسی و بارگذاری صف‌ها…</div></main>
  if(!user||!admin)return <main className="nn-mod-page"><section className="nn-mod-empty"><ShieldCheck/><h1>دسترسی مدیریت لازم است</h1><p>این بخش فقط برای مدیران مجاز است.</p><a href="/account">ورود به حساب</a></section></main>
 
+ const visiblePosts=tab==='reels'?posts.filter(p=>p.media_type==='video'):posts.filter(p=>p.media_type!=='video')
  return <main className="nn-mod-page">
   <header className="nn-mod-hero"><div><span>مرکز ایمنی و نظارت</span><h1>مدیریت جامعه</h1><p>بررسی ریلز، پست‌ها، گزارش‌های کاربران و دیدگاه‌ها از یک صف یکپارچه.</p></div><button type="button" onClick={()=>void load()} disabled={!!busy}><RefreshCw size={17}/> تازه‌سازی</button></header>
   <nav className="nn-mod-tabs">
-   <button className={tab==='posts'?'active':''} onClick={()=>setTab('posts')}><FileVideo size={17}/> آثار در انتظار <b>{posts.length.toLocaleString('fa-IR')}</b></button>
+   <button className={tab==='posts'?'active':''} onClick={()=>setTab('posts')}><ImageIcon size={17}/> پست‌های تصویری <b>{posts.filter(p=>p.media_type!=='video').length.toLocaleString('fa-IR')}</b></button>
+   <button className={tab==='reels'?'active':''} onClick={()=>setTab('reels')}><FileVideo size={17}/> تأیید ریلز <b>{posts.filter(p=>p.media_type==='video').length.toLocaleString('fa-IR')}</b></button>
    <button className={tab==='reports'?'active':''} onClick={()=>setTab('reports')}><AlertTriangle size={17}/> گزارش‌های باز <b>{reports.length.toLocaleString('fa-IR')}</b></button>
    <button className={tab==='comments'?'active':''} onClick={()=>setTab('comments')}><Eye size={17}/> دیدگاه‌ها <b>{comments.length.toLocaleString('fa-IR')}</b></button>
   </nav>
   {error&&<p className="nn-mod-message error" role="alert">{error}</p>}
   {notice&&<p className="nn-mod-message success" role="status">{notice}</p>}
-  {tab==='posts'&&<section className="nn-mod-list">{posts.length?posts.map(p=><article className="nn-mod-card" key={p.id}>
+  {(tab==='posts'||tab==='reels')&&<section className="nn-mod-list">{visiblePosts.length?visiblePosts.map(p=><article className="nn-mod-card" key={p.id}>
    <div className="nn-mod-media">{p.url?(p.media_type==='video'?<video src={p.url} controls playsInline preload="metadata"/>:<img src={p.url} alt="پیش‌نمایش اثر"/>):<span>رسانه قابل بارگذاری نیست</span>}</div>
    <div className="nn-mod-body"><div className="nn-mod-meta"><b>{p.media_type==='video'?'ریلز / ویدئو':'تصویر'}</b><span>{p.author}</span><time>{faDate(p.created_at)}</time></div><p>{p.caption}</p><label>دلیل تصمیم (برای رد یا پنهان‌سازی الزامی)<textarea maxLength={1000} value={reasons[p.id]??''} onChange={e=>setReasons(v=>({...v,[p.id]:e.target.value}))} placeholder="دلیل را کوتاه و روشن بنویس…"/></label><div className="nn-mod-actions"><button className="approve" disabled={busy===p.id} onClick={()=>void act('post',p.id,'approve')}><Check size={16}/> تأیید و انتشار</button><button className="reject" disabled={busy===p.id} onClick={()=>void act('post',p.id,'reject')}><X size={16}/> رد اثر</button><button className="quiet" disabled={busy===p.id} onClick={()=>void act('post',p.id,'hide')}><Eye size={16}/> پنهان‌سازی</button></div></div>
-  </article>):<div className="nn-mod-empty"><Check/><h2>صف بررسی خالی است</h2><p>اثر تازه‌ای برای بررسی وجود ندارد.</p></div>}</section>}
+  </article>):<div className="nn-mod-empty"><Check/><h2>{tab==='reels'?'صف تأیید ریلز خالی است':'صف بررسی پست‌ها خالی است'}</h2><p>مورد تازه‌ای برای بررسی وجود ندارد.</p></div>}</section>}
   {tab==='reports'&&<section className="nn-mod-list">{reports.length?reports.map(r=><article className="nn-mod-report" key={r.id}><div><span className="nn-mod-reason">{reasonLabel[r.reason]??r.reason}</span><h2>{r.postCaption}</h2><p>گزارش‌دهنده: {r.reporter} · {faDate(r.created_at)}</p>{r.details&&<blockquote>{r.details}</blockquote>}<small>شناسه اثر: {r.post_id}</small><label>دلیل اقدام روی اثر<textarea maxLength={1000} value={reasons[r.post_id]??''} onChange={e=>setReasons(v=>({...v,[r.post_id]:e.target.value}))} placeholder="برای پنهان‌سازی، دلیل را وارد کن…"/></label></div><div className="nn-mod-actions"><button className="approve" disabled={busy===r.id} onClick={()=>void act('report',r.id,'review')}><Check size={16}/> رسیدگی شد</button><button className="quiet" disabled={busy===r.id} onClick={()=>void act('report',r.id,'dismiss')}><X size={16}/> رد گزارش</button><button className="reject" disabled={busy===r.id} onClick={()=>void act('post',r.post_id,'hide')}><Trash2 size={16}/> پنهان‌سازی اثر</button></div></article>):<div className="nn-mod-empty"><Check/><h2>گزارش بازی وجود ندارد</h2><p>همهٔ گزارش‌ها رسیدگی شده‌اند.</p></div>}</section>}
   {tab==='comments'&&<section className="nn-mod-list">{comments.length?comments.map(c=><article className="nn-mod-comment" key={c.id}><div><div className="nn-mod-meta"><b>{c.author}</b><time>{faDate(c.created_at)}</time><span className={c.status==='hidden'?'hidden':'visible'}>{c.status==='hidden'?'پنهان':'نمایش داده می‌شود'}</span></div><p>{c.body}</p><small>اثر مرتبط: {c.post_id}</small></div><div className="nn-mod-actions">{c.status==='published'?<><textarea aria-label="دلیل پنهان‌سازی" maxLength={1000} placeholder="دلیل پنهان‌سازی…" value={reasons[c.id]??''} onChange={e=>setReasons(v=>({...v,[c.id]:e.target.value}))}/><button className="reject" disabled={busy===c.id} onClick={()=>void act('comment',c.id,'hide')}>پنهان‌سازی</button></>:<button className="approve" disabled={busy===c.id} onClick={()=>void act('comment',c.id,'restore')}>بازگردانی</button>}</div></article>):<div className="nn-mod-empty"><Check/><h2>دیدگاهی وجود ندارد</h2></div>}</section>}
  </main>
