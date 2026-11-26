@@ -15,11 +15,11 @@
 
 ## Deployment model
 
-The repository keeps its historical source archive and applies source-overlay.zip after extraction in both GitHub Actions and Vercel. The overlay is deterministic and contains the social components/styles, a validation helper/test and the SQL migration. App route changes are applied by guarded, exact-anchor replacements.
+The repository keeps its historical source archive and applies source-overlay/ after extraction in both GitHub Actions and Vercel. The compressed overlay is stored as base64 shards under source-overlay-b64/ and restored by scripts/restore-overlay.sh. The overlay is deterministic and includes the social components/styles, validation helper/test and SQL migration. App route changes are applied by guarded, exact-anchor replacements.
 
 ## Database migration
 
-supabase/migrations/20261126093000_qnr_social_network.sql
+source-overlay/supabase/migrations/20261126093000_qnr_social_network.sql
 
 This migration has not been applied to the hosted project because the existing Naghsh Negar Supabase project is paused. Do not claim the social feed is live until the project is restored, the migration is applied, the storage bucket and policies are verified, and a real authenticated upload/read/like/comment flow passes.
 
