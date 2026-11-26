@@ -8,6 +8,13 @@
 <meta property="og:type" content="website"><meta property="og:locale" content="fa_IR"><meta property="og:site_name" content="نقش‌نگار">
 <meta property="og:title" content="استودیوی طراحی لحاف | نقش‌نگار"><meta property="og:description" content="الهام بگیر، رنگ‌ها را ترکیب کن و الگوی چهل‌تکهٔ خودت را بساز.">
 <meta property="og:image" content="https://naghsh-negar.vercel.app/assets/quilt-blocks/eight-point-star-preview.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"بلوک چهل‌تکه چیست؟","acceptedAnswer":{"@type":"Answer","text":"بلوک چهل‌تکه بخشی از یک طرح بزرگ‌تر است که از قطعات پارچه با شکل‌ها و رنگ‌های هماهنگ ساخته می‌شود و می‌تواند به‌تنهایی یا در کنار بلوک‌های دیگر استفاده شود."}},
+{"@type":"Question","name":"برای شروع چهل‌تکه‌دوزی به چه چیزهایی نیاز دارم؟","acceptedAnswer":{"@type":"Answer","text":"برای شروع معمولاً پارچهٔ نخی، خط‌کش، کاتر یا قیچی پارچه، زیرانداز برش، نخ مناسب و الگوی اندازه‌گیری‌شده لازم است. ابزار دقیق به روش برش و دوخت بستگی دارد."}},
+{"@type":"Question","name":"آیا همهٔ بلوک‌های چهل‌تکه اندازهٔ یکسانی دارند؟","acceptedAnswer":{"@type":"Answer","text":"خیر. اندازهٔ بلوک به الگو، کاربرد و طرح نهایی بستگی دارد؛ بهتر است اندازهٔ نهایی و مقدار جای دوخت را پیش از برش از روی الگوی انتخاب‌شده بررسی کنید."}}
+]}</script>
+
 <style>
 :root{color-scheme:light;--forest:#21483e;--jade:#397568;--cream:#faf7ef;--paper:#fffdf8;--gold:#c99a45;--ink:#182d29;--muted:#65776e;--line:rgba(39,75,62,.14)}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 88% 3%,#e5eee5 0,transparent 32%),var(--cream);color:var(--ink);font-family:Vazirmatn,Tahoma,Arial,sans-serif;line-height:1.85}a{color:inherit}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}
@@ -18,6 +25,12 @@
 .next{background:var(--forest);color:#fff;border-radius:26px;padding:clamp(24px,4vw,42px);display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:64px}.next h2{margin:0 0 8px;font-size:1.5rem}.next p{margin:0;color:#d6e5dc}.next .btn{background:#f5e9cf;color:#263d32;white-space:nowrap}footer{padding:0 0 30px;color:var(--muted);font-size:.82rem}
 @media(max-width:760px){.top nav{gap:12px}.hero{grid-template-columns:1fr;padding-top:24px}.art{max-width:560px;margin:auto}.facts{grid-template-columns:1fr}.next{align-items:flex-start;flex-direction:column}}
 @media(prefers-reduced-motion:no-preference){.art{animation:rise .7s ease both}@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}}
+
+.guide{padding:0 0 64px}.section-title{font-size:clamp(1.45rem,3vw,2rem);margin:0 0 12px;color:var(--forest)}.section-lead{color:var(--muted);max-width:760px;margin:0 0 24px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0 42px}.guide-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px}.guide-card h3{margin:0 0 8px;color:var(--forest);font-size:1rem}.guide-card p{margin:0;color:var(--muted);font-size:.9rem}
+.steps{counter-reset:step;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 42px;padding:0;list-style:none}.steps li{counter-increment:step;background:#edf2e9;border-radius:18px;padding:18px}.steps li:before{content:counter(step, persian);display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--forest);color:#fff;font-weight:900;margin-bottom:10px}.steps strong{display:block;color:var(--forest);margin-bottom:6px}.steps span{color:var(--muted);font-size:.9rem}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 0}.faq article{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px}.faq h3{font-size:1rem;color:var(--forest);margin:0 0 8px}.faq p{color:var(--muted);margin:0;font-size:.9rem}
+@media(max-width:760px){.cards,.steps,.faq{grid-template-columns:1fr}}
 </style></head>
 <body><div class="wrap">
 <header class="top"><a class="brand" href="/">نقش‌نگار</a><nav aria-label="ناوبری اصلی"><a href="/designer">طراح بلوک</a><a href="/gallery">گالری</a><a href="/courses">آموزش‌ها</a></nav></header>
@@ -28,5 +41,28 @@
 <div class="actions"><a class="btn primary" href="/designer">شروع طراحی بلوک</a><a class="btn secondary" href="/gallery">دیدن گالری آثار</a></div></div>
 <figure class="art"><span class="stamp">پیش‌نمایش یک بلوک هنری</span><img src="/assets/quilt-blocks/eight-point-star-preview.png" alt="بلوک چهل‌تکهٔ ستارهٔ هشت‌پر با پارچه‌های سبز جنگلی، یشمی، کرم، طلایی، مرجانی و یاسی"><figcaption><strong>ستارهٔ هشت‌پر</strong><span>ترکیب هندسی پارچه و رنگ</span></figcaption></figure></section>
 <section class="facts" aria-label="ویژگی‌های مدل"><div class="fact"><strong>۶۲ قطعهٔ مستقل</strong><span>ساختار مدل برای تغییر رنگ و متریال هر بخش</span></div><div class="fact"><strong>۶٬۰۰۴ مثلث</strong><span>نسخهٔ سبک‌سازی‌شده برای تجربهٔ وب</span></div><div class="fact"><strong>۱٫۷ مگابایت</strong><span>خروجی GLB با بافت WebP در نسخهٔ کامل</span></div></section>
+<section class="guide" aria-labelledby="guide-title">
+<h2 class="section-title" id="guide-title">از یک ستاره تا یک طرح شخصی</h2>
+<p class="section-lead">در چهل‌تکه‌دوزی، یک بلوک از قطعات پارچه ساخته می‌شود که با برش دقیق، جهت درست بافت و ترتیب دوخت کنار هم قرار می‌گیرند. ستارهٔ هشت‌پر نمونه‌ای از الگوهای هندسی است؛ در آن مثلث‌ها و لوزی‌ها به‌تدریج شکل یک ستاره را می‌سازند و قاب بیرونی، طرح را کامل می‌کند. همین منطق را می‌توان با پارچه‌های ساده، گل‌دار یا بافت‌دار دوباره تفسیر کرد.</p>
+<div class="cards">
+<article class="guide-card"><h3>هندسه و تقارن</h3><p>پیش از برش، جهت هر قطعه و محل اتصال آن را مشخص کن. تقارن درست باعث می‌شود نوک‌های ستاره و خطوط اتصال در مرکز به‌درستی کنار هم قرار بگیرند.</p></article>
+<article class="guide-card"><h3>هماهنگی رنگ‌ها</h3><p>برای خوانایی الگو، میان رنگ‌های تیره و روشن تضاد کافی بساز. سبز جنگلی، یشمی و کرم در این نمونه با جزئیات طلایی، مرجانی و یاسی متعادل شده‌اند.</p></article>
+<article class="guide-card"><h3>بافت و جنس پارچه</h3><p>پارچه‌های هم‌وزن و سازگار با هم، دوخت منظم‌تری ایجاد می‌کنند. پیش از ترکیب چند جنس، ضخامت و میزان کشسانی آن‌ها را بررسی کن تا بلوک تاب برندارد.</p></article>
+</div>
+<h2 class="section-title">مسیر پیشنهادی برای شروع</h2>
+<p class="section-lead">اگر تازه شروع کرده‌ای، یک بلوک کوچک انتخاب کن و مراحل را به‌ترتیب انجام بده. اندازهٔ قطعات و جای دوخت را از الگوی همان بلوک بگیر؛ اندازهٔ ثابت و یکسانی برای همهٔ طرح‌ها وجود ندارد.</p>
+<ol class="steps">
+<li><strong>الگو را بخوان</strong><span>شکل قطعات، ترتیب اتصال و اندازهٔ نهایی بلوک را پیش از برش مرور کن.</span></li>
+<li><strong>پارچه‌ها را بچین</strong><span>رنگ‌ها را کنار هم قرار بده و مطمئن شو بخش‌های اصلی الگو از پس‌زمینه قابل تشخیص‌اند.</span></li>
+<li><strong>آزمایشی بدوز</strong><span>ابتدا یک نمونهٔ کوچک بساز، درزها را بررسی کن و سپس سراغ تکرار بلوک یا پروژهٔ بزرگ‌تر برو.</span></li>
+</ol>
+<h2 class="section-title">راهنمای کوتاه چهل‌تکه‌دوزی</h2>
+<div class="faq">
+<article><h3>بلوک چهل‌تکه چیست؟</h3><p>بلوک، واحدی از یک طرح بزرگ‌تر است که از چند قطعهٔ پارچه تشکیل می‌شود. می‌توان چند بلوک هم‌اندازه را کنار هم دوخت یا یک بلوک را به‌عنوان بخش مرکزی یک اثر به کار برد.</p></article>
+<article><h3>برای شروع به چه ابزارهایی نیاز دارم؟</h3><p>پارچهٔ نخی، خط‌کش، قیچی یا کاتر پارچه، زیرانداز برش، نخ مناسب و الگوی اندازه‌گیری‌شده از ابزارهای رایج شروع هستند. ابزار دقیق به روش برش و دوخت بستگی دارد.</p></article>
+<article><h3>آیا همهٔ بلوک‌ها اندازهٔ یکسانی دارند؟</h3><p>خیر. اندازه به الگو و کاربرد نهایی بستگی دارد. پیش از برش، اندازهٔ نهایی و جای دوخت را از روی الگوی انتخاب‌شده کنترل کن.</p></article>
+<article><h3>از کجا طرح‌های بیشتری پیدا کنم؟</h3><p>در گالری نقش‌نگار نمونه‌کارها را ببین و برای شروع طراحی به صفحهٔ طراح بلوک برو. پیش‌نمایش این صفحه یک نمونهٔ تصویری از بلوک ستارهٔ هشت‌پر است.</p></article>
+</div>
+</section>
 <section class="next"><div><h2>طرح خودت را بساز</h2><p>از بلوک‌های آماده الهام بگیر و وارد فضای طراحی نقش‌نگار شو.</p></div><a class="btn" href="/designer">رفتن به طراح بلوک</a></section>
 </main><footer>نقش‌نگار — فضای ارتباطی و خلاقیت مستقل برای هنر چهل‌تکه‌دوزی</footer></div></body></html>
