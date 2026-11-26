@@ -13,7 +13,10 @@ for (const entry of [
   'src/app/SocialPage.tsx', 'src/app/social.css',
   'src/app/SocialModerationAdminPage.tsx', 'src/app/AdminSocialModerationShortcut.tsx', 'src/app/social-moderation-admin.css',
   'src/app/FabricStashPage.tsx', 'src/app/fabric-stash.css',
+  'src/app/MusicPlayer.tsx', 'src/app/MusicAdminPage.tsx', 'src/app/AdminMusicShortcut.tsx', 'src/app/music.css',
+  'supabase/migrations/20261126170000_qnr_music_admin_library.sql',
   'src/lib/social-validation.ts', 'supabase/functions/_shared/social-validation.test.ts',
+  'src/lib/music-validation.ts', 'supabase/functions/_shared/music-validation.test.ts',
   'supabase/migrations/20261126093000_qnr_social_network.sql',
   'supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql',
   'supabase/migrations/20261126100341_qnr_social_acl_hardening.sql',
@@ -41,13 +44,28 @@ replaceOnce(
   "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, X } from 'lucide-react'",
   "import { ArrowLeft, Bell, BookOpen, Bookmark, Check, Compass, Home, Menu, MessageCircle, ShoppingBag, ShoppingCart, UserRound, Users, Package, X } from 'lucide-react'",
 )
-replaceOnce("import { CommunityPage } from './CommunityPage'", "import { CommunityPage } from './CommunityPage'\nimport { lazy, Suspense } from 'react'\nconst SocialPage = lazy(() => import('./SocialPage').then(m => ({ default: m.SocialPage })))\nconst SocialModerationAdminPage = lazy(() => import('./SocialModerationAdminPage').then(m => ({ default: m.SocialModerationAdminPage })))\nconst FabricStashPage = lazy(() => import('./FabricStashPage').then(m => ({ default: m.FabricStashPage })))\nimport { AdminSocialModerationShortcut } from './AdminSocialModerationShortcut'\nimport './premium-foundation.css'\nimport './premium-overhaul.css'\nimport './visual-interactions'\nimport './route-metadata'")
+replaceOnce("import { CommunityPage } from './CommunityPage'", `import { CommunityPage } from './CommunityPage'
+import { lazy, Suspense } from 'react'
+const SocialPage = lazy(() => import('./SocialPage').then(m => ({ default: m.SocialPage })))
+const SocialModerationAdminPage = lazy(() => import('./SocialModerationAdminPage').then(m => ({ default: m.SocialModerationAdminPage })))
+const FabricStashPage = lazy(() => import('./FabricStashPage').then(m => ({ default: m.FabricStashPage })))
+const MusicPlayer = lazy(() => import('./MusicPlayer').then(m => ({ default: m.MusicPlayer })))
+const MusicAdminPage = lazy(() => import('./MusicAdminPage').then(m => ({ default: m.MusicAdminPage })))
+import { AdminMusicShortcut } from './AdminMusicShortcut'
+import { AdminSocialModerationShortcut } from './AdminSocialModerationShortcut'
+import './premium-foundation.css'
+import './premium-overhaul.css'
+import './visual-interactions'
+import './route-metadata'`)
 replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/stash', label: 'انبار پارچه', Icon: Package },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
 replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n", "")
 replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/admin/social-moderation', 'مدیریت جامعه'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
-replaceOnce("        <Route path=\"/admin\" element={<AdminPage />} />", "        <Route path=\"/admin\" element={<><AdminSocialModerationShortcut /><AdminPage /></>} />")
+replaceOnce("        <Route path=\"/admin\" element={<AdminPage />} />", "        <Route path=\"/admin\" element={<><AdminMusicShortcut /><AdminSocialModerationShortcut /><AdminPage /></>} />")
 replaceOnce("        <Route path=\"/admin/*\" element={<AdminPage />} />", "        <Route path=\"/admin/*\" element={<><AdminSocialModerationShortcut /><AdminPage /></>} />")
-replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/social\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری جامعه…</div>}><SocialPage /></Suspense>} />\n        <Route path=\"/reels\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری ریلز…</div>}><SocialPage initialTab=\"reels\" /></Suspense>} />\n        <Route path=\"/admin/social-moderation\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری مدیریت…</div>}><SocialModerationAdminPage /></Suspense>} />\n        <Route path=\"/stash\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری انبار پارچه…</div>}><FabricStashPage /></Suspense>} />")
+replaceOnce("        <Route path=\"/gallery\" element={<GalleryPage />} />", "        <Route path=\"/gallery\" element={<GalleryPage />} />\n        <Route path=\"/admin/music\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری استودیوی صوتی…</div>}><MusicAdminPage /></Suspense>} />\n        <Route path=\"/social\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری جامعه…</div>}><SocialPage /></Suspense>} />\n        <Route path=\"/reels\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری ریلز…</div>}><SocialPage initialTab=\"reels\" /></Suspense>} />\n        <Route path=\"/admin/social-moderation\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری مدیریت…</div>}><SocialModerationAdminPage /></Suspense>} />\n        <Route path=\"/stash\" element={<Suspense fallback={<div role=\"status\">در حال بارگذاری انبار پارچه…</div>}><FabricStashPage /></Suspense>} />")
+const routesCount = (app.match(/<Routes\b/g) ?? []).length
+if (routesCount !== 1) throw new Error('Expected one Routes root, found ' + routesCount)
+app = app.replace(/(<Routes\b)/, '<Suspense fallback={null}><MusicPlayer /></Suspense>\n        $1')
 writeFileSync(appPath, app)
 const indexPath = join(projectDir, 'index.html')
 if (existsSync(indexPath)) {
