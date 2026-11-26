@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Music2, Pause, Play, RefreshCw, UploadCloud } from 'lucide-react'
+import { Music2, Pause, Play, UploadCloud } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { validateMusicAudio, validateMusicCover } from '../lib/music-validation'
 import './music.css'
