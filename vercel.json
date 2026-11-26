@@ -5,15 +5,36 @@
   "buildCommand": "bash vercel-build.sh",
   "outputDirectory": ".vercel-build/naqsh-negar/dist",
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/" }
+    {
+      "source": "/((?!assets/).*)",
+      "destination": "/"
+    }
   ],
   "headers": [
     {
+      "source": "/(index\\.html|registerSW\\.js|sw\\.js|workbox-.*\\.js)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
       ]
     }
   ]
