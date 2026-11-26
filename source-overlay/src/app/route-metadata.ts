@@ -262,7 +262,9 @@ const editorialContent: Record<string, { title: string; intro: string; sections:
 }
 
 function addEditorialContent() {
-  const path = window.location.pathname.replace(/\\/+$/, "") || "/"
+  let path = window.location.pathname
+  while (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1)
+  if (!path) path = "/"
   const root = document.querySelector<HTMLElement>("#root main, #root [role='main']")
   if (!root) return
 
