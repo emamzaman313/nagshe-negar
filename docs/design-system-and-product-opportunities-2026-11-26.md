@@ -41,9 +41,11 @@ Typography: Vazirmatn for Persian UI. Controls: 44px default, 36px small, 48px l
 - The public RPC is SECURITY INVOKER and delegates to a SECURITY DEFINER function in qnr_private, with an auth.uid() and admin-role check.
 
 ## Current delivery evidence
-- Main branch commit: 7e07b676055fb619946461b8f7b4ea37b2e9edce
-- Android APK workflow run 45804977121: success.
-- Vercel production deployment dpl_sCp6UxgmKcKCDBUqji5jceFjkKof: READY, production, main, commit 7e07b67.
+- Main branch commit: 7ce52e5e141e5505316e939d7a3f42253dba55c9
+- Visual refinement PR #11 merged: https://github.com/emamzaman313/nagshe-negar/pull/11
+- Android APK workflow run 45809585991 for the visual refinement branch: success (including npm build, Capacitor sync, Gradle APK build, and artifact upload).
+- Vercel production deployment dpl_2b4tpXmReKwYnACEL3zy8u49unDq: READY, production, main, commit 7ce52e5.
+- The production alias https://naghsh-negar.vercel.app now serves the new 89.90 kB CSS bundle containing the moderation visual-pass tokens, patchwork hero treatment, responsive cards, and reduced-motion styles.
 - Supabase security advisor still reports Leaked Password Protection disabled. This is an outstanding Auth configuration item.
 - The production site still needs a human visual walkthrough with a real administrator account to verify all moderation controls and private media previews in the browser.
 
