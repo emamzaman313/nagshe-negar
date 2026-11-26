@@ -8,7 +8,7 @@ if (!process.argv[2] || !existsSync(join(projectDir, 'package.json'))) {
   throw new Error('Pass the extracted naqsh-negar project directory as the first argument.')
 }
 for (const entry of [
-  'src/app/premium-foundation.css', 'src/app/premium-overhaul.css', 'src/app/visual-interactions.ts', 'src/app/route-metadata.ts',
+  'src/app/premium-foundation.css', 'src/app/premium-overhaul.css', 'src/app/kaveh-visual-parity.css', 'src/app/visual-interactions.ts', 'src/app/route-metadata.ts',
   'public/robots.txt', 'public/sitemap.xml', 'public/quilt-studio-preview.html', 'public/assets/quilt-blocks/eight-point-star-preview.png',
   'src/app/SocialPage.tsx', 'src/app/social.css',
   'src/app/SocialModerationAdminPage.tsx', 'src/app/AdminSocialModerationShortcut.tsx', 'src/app/social-moderation-admin.css',
@@ -59,6 +59,7 @@ import { AdminMusicShortcut } from './AdminMusicShortcut'
 import { AdminSocialModerationShortcut } from './AdminSocialModerationShortcut'
 import './premium-foundation.css'
 import './premium-overhaul.css'
+import './kaveh-visual-parity.css'
 import './visual-interactions'
 import './route-metadata'`)
 replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/stash', label: 'انبار پارچه', Icon: Package },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
