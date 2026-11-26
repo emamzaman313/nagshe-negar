@@ -1,0 +1,1 @@
+The ordered part00..part04 files concatenate to the social overlay ZIP. scripts/restore-overlay.sh validates and extracts the archive before CI or deployment.
