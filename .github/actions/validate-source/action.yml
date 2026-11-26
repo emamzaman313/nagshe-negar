@@ -16,6 +16,7 @@ runs:
         test -f src/app/SocialPage.tsx
         test -f src/app/social.css
         test -f supabase/migrations/20261126093000_qnr_social_network.sql
+        test -f supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql
         test -f supabase/functions/create-order/order-lines.test.ts
         test -f supabase/functions/_shared/gallery-validation.test.ts
         test -f supabase/functions/_shared/chat-validation.test.ts
