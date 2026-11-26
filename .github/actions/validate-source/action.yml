@@ -31,6 +31,7 @@ runs:
         grep -q 'admin/social-moderation' src/app/App.tsx
         grep -q 'qnr_admin_moderate_social_content' src/app/SocialModerationAdminPage.tsx
         grep -q 'AdminSocialModerationShortcut' src/app/App.tsx
+        grep -q 'تأیید ریلز' src/app/SocialModerationAdminPage.tsx
     - name: Run dependency-free validation tests
       shell: bash
       working-directory: ${{ inputs.project-dir }}
