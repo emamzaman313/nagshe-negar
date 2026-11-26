@@ -55,3 +55,30 @@ table{border-collapse:separate;border-spacing:0;width:100%;overflow:hidden;borde
 @media(min-width:1100px){main{padding-bottom:clamp(44px,6vw,88px)}}
 @media(max-width:760px){:where(.primary-button,.button-primary,.btn-primary,.submit-button){min-height:44px;padding-inline:16px}}
 @media(prefers-reduced-motion:reduce){.skeleton,.loading-skeleton{animation:none}}
+
+
+/* Dark mode parity — keep the atelier identity without forcing light native controls. */
+:root[data-theme="dark"],html.dark,:root.dark,body.dark{
+  color-scheme:dark;
+  --nn-ink:#e8f0e9;--nn-ink-soft:#b6c8bb;--nn-forest:#9bc7ae;--nn-jade:#8fc4aa;
+  --nn-mint:#263c30;--nn-cream:#17241d;--nn-paper:#1d2c23;--nn-line:rgba(190,220,197,.14);
+  --nn-glass:rgba(27,43,34,.78);--nn-shadow:0 18px 50px rgba(0,0,0,.24);--nn-shadow-hover:0 25px 64px rgba(0,0,0,.34);
+  --nn-focus:0 0 0 3px rgba(126,190,153,.22),0 0 0 1px rgba(126,190,153,.75);
+}
+:root[data-theme="dark"] body,html.dark body,body.dark{
+  color:var(--nn-ink);
+  background:radial-gradient(620px circle at var(--nn-pointer-x) var(--nn-pointer-y),rgba(201,154,69,.075),transparent 70%),radial-gradient(700px circle at 0% 8%,rgba(90,145,119,.11),transparent 62%),linear-gradient(145deg,#111d17 0%,#17251d 52%,#1b261f 100%);
+  background-attachment:fixed;
+}
+:root[data-theme="dark"] :is(.card,.panel,.surface,.dashboard-card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.order-card,.support-card,.settings-card,.stat-card,.admin-card),
+html.dark :is(.card,.panel,.surface,.dashboard-card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.order-card,.support-card,.settings-card,.stat-card,.admin-card),
+body.dark :is(.card,.panel,.surface,.dashboard-card,.feature-card,.product-card,.lesson-card,.course-card,.project-card,.gallery-card,.order-card,.support-card,.settings-card,.stat-card,.admin-card){
+  color:var(--nn-ink)!important;border-color:var(--nn-line)!important;background:linear-gradient(145deg,rgba(34,54,42,.96),rgba(24,40,31,.94))!important;
+}
+:root[data-theme="dark"] :is(.site-header,.app-header,.topbar,.navbar),html.dark :is(.site-header,.app-header,.topbar,.navbar),body.dark :is(.site-header,.app-header,.topbar,.navbar){background:rgba(20,34,26,.86)!important;border-color:var(--nn-line)!important}
+:root[data-theme="dark"] :is(input:not([type=checkbox]):not([type=radio]),textarea,select),html.dark :is(input:not([type=checkbox]):not([type=radio]),textarea,select),body.dark :is(input:not([type=checkbox]):not([type=radio]),textarea,select){color:#e8f0e9;background:#1b2c22;border-color:#425b49}
+:root[data-theme="dark"] :is(input,textarea,select)::placeholder,html.dark :is(input,textarea,select)::placeholder,body.dark :is(input,textarea,select)::placeholder{color:#9aafa0}
+:root[data-theme="dark"] table,html.dark table,body.dark table{color:#e8f0e9;background:#1b2b22;border-color:#3a5141}
+:root[data-theme="dark"] th,html.dark th,body.dark th{color:#dcebdd;background:#263d30}
+:root[data-theme="dark"] td,html.dark td,body.dark td{border-color:#354b3c}
+:root[data-theme="dark"] :is(h1,h2,h3),html.dark :is(h1,h2,h3),body.dark :is(h1,h2,h3){color:#edf4ed}
