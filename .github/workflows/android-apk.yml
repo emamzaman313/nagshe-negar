@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'naqsh-negar-source.zip'
+      - 'source-overlay/**'
       - '.github/workflows/android-apk.yml'
       - '.github/actions/validate-source/action.yml'
   workflow_dispatch:
@@ -35,6 +36,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Apply social overlay
+        run: node source-overlay/apply-overlay.mjs "$PROJECT_DIR"
+
       - name: Validate source
         uses: ./.github/actions/validate-source
         with:
@@ -49,8 +53,8 @@ jobs:
       - name: Install dependencies and build
         working-directory: ${{ env.PROJECT_DIR }}
         env:
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://jnccbdgtdrbufzemmnod.supabase.co' }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_-x7BZmxRXVDkQdy2XcC0ww_d5Zbtf8Y' }}
         run: |
           npm ci
           npm run build
