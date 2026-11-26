@@ -13,8 +13,8 @@ test('rejects mismatched extensions and unsupported MIME types', () => {
 })
 
 test('enforces image and video size limits', () => {
-  assert.deepEqual(validateSocialMedia({ name: 'large.mp4', type: 'video/mp4', size: SOCIAL_VIDEO_MAX_BYTES + 1 }), { ok: false, error: 'too_large' })
-  assert.deepEqual(validateSocialMedia({ name: 'large.jpg', type: 'image/jpeg', size: SOCIAL_IMAGE_MAX_BYTES + 1 }), { ok: false, error: 'too_large' })
+  assert.deepEqual(validateSocialMedia({ name: 'large.mp4', type: 'video/mp4', size: SOCIAL_VIDEO_MAX_BYTES + 1 }), { ok: false, error: 'file_too_large' })
+  assert.deepEqual(validateSocialMedia({ name: 'large.jpg', type: 'image/jpeg', size: SOCIAL_IMAGE_MAX_BYTES + 1 }), { ok: false, error: 'file_too_large' })
 })
 
 test('normalizes and bounds captions', () => {
