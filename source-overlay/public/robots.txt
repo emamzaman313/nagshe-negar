@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /stash
+
+Sitemap: https://naghsh-negar.vercel.app/sitemap.xml
