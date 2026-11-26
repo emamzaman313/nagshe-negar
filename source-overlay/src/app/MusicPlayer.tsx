@@ -29,12 +29,13 @@ export function MusicPlayer(){
  },[resolveTrack])
  useEffect(()=>{void load()},[load])
  useEffect(()=>{
-  if(!supabase)return
-  const channel=supabase.channel('qnr-music-live-settings')
+  const client=supabase
+  if(!client)return
+  const channel=client.channel('qnr-music-live-settings')
    .on('postgres_changes',{event:'*',schema:'public',table:'qnr_music_platform_settings'},()=>{void load()})
    .on('postgres_changes',{event:'*',schema:'public',table:'qnr_music_tracks'},()=>{void load()})
    .subscribe()
-  return()=>{void supabase.removeChannel(channel)}
+  return()=>{void client.removeChannel(channel)}
  },[load])
  useEffect(()=>{if(!enabled&&audio.current){audio.current.pause();setPlaying(false)}},[enabled])
  useEffect(()=>{try{setCollapsed(window.localStorage.getItem('qnr-music-collapsed')==='true')}catch{}},[])
