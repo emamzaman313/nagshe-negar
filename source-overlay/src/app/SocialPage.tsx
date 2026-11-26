@@ -176,10 +176,32 @@ export function SocialPage({ initialTab = 'feed' }: { initialTab?: 'feed'|'reels
   }
   async function sendComment(e:FormEvent) {
     e.preventDefault()
-    if (!supabase || !user || !commentsFor || !comment.trim()) return
-    const r = await supabase.from('qnr_social_comments').insert({post_id:commentsFor,author_id:user,body:comment.trim().slice(0,1200)})
-    if (r.error) setNotice('ثبت دیدگاه انجام نشد.')
-    else { setComment(''); await load(); await openComments(posts.find(p => p.id === commentsFor)!) }
+    const postId = commentsFor
+    const body = comment.trim()
+    if (!supabase || !user || !postId || !body) return
+
+    const r = await supabase.from('qnr_social_comments').insert({
+      post_id:postId,
+      author_id:user,
+      body:body.slice(0,1200)
+    })
+    if (r.error) {
+      setNotice('ثبت دیدگاه انجام نشد.')
+      return
+    }
+
+    setComment('')
+    setNotice('دیدگاهت ثبت شد.')
+    await load()
+
+    // The feed can change while the comment request is in flight.
+    // Refresh the thread only when its parent post is still available.
+    const parentPost = posts.find(p => p.id === postId)
+    if (parentPost) await openComments(parentPost)
+    else {
+      setCommentsFor(null)
+      setComments([])
+    }
   }
   async function report(e:FormEvent) {
     e.preventDefault()
