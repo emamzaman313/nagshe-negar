@@ -46,7 +46,7 @@ function addStudioNavLink() {
 }
 
 function syncSemanticHeadings() {
-  const path = window.location.pathname.replace(/\\/+$/, "") || "/"
+  const path = window.location.pathname.replace(/\/+$/, "") || "/"
   const root = document.querySelector<HTMLElement>("#root main, #root [role='main']") ?? document.getElementById("root")
   if (!root) return
 
