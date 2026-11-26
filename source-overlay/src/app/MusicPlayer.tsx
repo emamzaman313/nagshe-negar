@@ -28,6 +28,15 @@ export function MusicPlayer(){
   if(p.data.user){const pref=await supabase.from('qnr_music_preferences').select('music_enabled,volume').eq('user_id',p.data.user.id).maybeSingle();if(pref.data){setEnabled(settings.enabled!==false&&pref.data.music_enabled!==false);setVolume(Number(pref.data.volume??.65))}}
  },[resolveTrack])
  useEffect(()=>{void load()},[load])
+ useEffect(()=>{
+  if(!supabase)return
+  const channel=supabase.channel('qnr-music-live-settings')
+   .on('postgres_changes',{event:'*',schema:'public',table:'qnr_music_platform_settings'},()=>{void load()})
+   .on('postgres_changes',{event:'*',schema:'public',table:'qnr_music_tracks'},()=>{void load()})
+   .subscribe()
+  return()=>{void supabase.removeChannel(channel)}
+ },[load])
+ useEffect(()=>{if(!enabled&&audio.current){audio.current.pause();setPlaying(false)}},[enabled])
  useEffect(()=>{try{setCollapsed(window.localStorage.getItem('qnr-music-collapsed')==='true')}catch{}},[])
  useEffect(()=>{try{window.localStorage.setItem('qnr-music-collapsed',String(collapsed))}catch{}},[collapsed])
  useEffect(()=>{if(audio.current)audio.current.volume=volume},[volume,audioUrl])
@@ -37,7 +46,7 @@ export function MusicPlayer(){
  async function toggle(){if(!enabled||!audio.current||!audioUrl)return;if(playing){audio.current.pause();setPlaying(false);return}try{await audio.current.play();setPlaying(true);setError('')}catch{setError('مرورگر برای شروع پخش به لمس دکمه نیاز دارد.')}}
  function move(step:number){if(!tracks.length)return;const next=(index+step+tracks.length)%tracks.length;void choose(tracks[next],playing)}
  async function persistVolume(value:number){setVolume(value);const {data}=await supabase?.auth.getUser()??{data:{user:null}};if(data.user)void supabase?.from('qnr_music_preferences').upsert({user_id:data.user.id,volume:value},{onConflict:'user_id'})}
- function gripDown(event:React.PointerEvent<HTMLDivElement>){if(event.pointerType==='mouse'&&event.button!==0)return;drag.current={pointerId:event.pointerId,y:event.clientY};event.currentTarget.setPointerCapture(event.pointerId)}
+ function gripDown(event:React.PointerEvent<HTMLDivElement>){if(event.pointerType==='mouse'&&event.button!==0)return;drag.current={pointerId:event.pointerId,y:event.clientY};try{event.currentTarget.setPointerCapture(event.pointerId)}catch{drag.current=null}}
  function gripUp(event:React.PointerEvent<HTMLDivElement>){const start=drag.current;drag.current=null;if(!start||start.pointerId!==event.pointerId)return;const delta=event.clientY-start.y;if(delta>42)setCollapsed(true);else if(delta< -42)setCollapsed(false)}
  function gripKey(event:React.KeyboardEvent<HTMLDivElement>){if(event.key==='Enter'||event.key===' '){event.preventDefault();setCollapsed(v=>!v)}if(event.key==='ArrowDown'){event.preventDefault();setCollapsed(true)}if(event.key==='ArrowUp'){event.preventDefault();setCollapsed(false)}}
  if(!tracks.length)return null
