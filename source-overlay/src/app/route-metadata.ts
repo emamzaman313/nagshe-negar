@@ -262,11 +262,18 @@ const editorialContent: Record<string, { title: string; intro: string; sections:
 }
 
 function addEditorialContent() {
-  const path = window.location.pathname.replace(/\/+$/, "") || "/"
+  const path = window.location.pathname.replace(/\\/+$/, "") || "/"
+  const root = document.querySelector<HTMLElement>("#root main, #root [role='main']")
+  if (!root) return
+
+  // Keep SPA navigation in sync: remove the previous route's editorial section,
+  // including when navigating from a public page to a private or unsupported route.
+  const existing = root.querySelector<HTMLElement>("[data-nn-editorial]")
+  if (existing?.dataset.nnEditorial === path) return
+  existing?.remove()
+
   const content = editorialContent[path]
   if (!content || path === "/account" || path === "/cart" || path === "/notifications") return
-  const root = document.querySelector<HTMLElement>("#root main, #root [role='main']")
-  if (!root || root.querySelector("[data-nn-editorial]")) return
 
   const section = document.createElement("section")
   section.className = "nn-editorial"
