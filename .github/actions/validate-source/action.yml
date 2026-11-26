@@ -1,5 +1,5 @@
 name: Validate Naghsh Negar source
-description: Run dependency-free validation tests included in the checked-in source archive
+description: Run dependency-free validation tests included in the checked-in source archive and social overlay
 inputs:
   project-dir:
     description: Absolute path to the extracted Naghsh Negar project
@@ -13,9 +13,13 @@ runs:
       run: |
         test -f package.json
         test -f package-lock.json
+        test -f src/app/SocialPage.tsx
+        test -f src/app/social.css
+        test -f supabase/migrations/20261126093000_qnr_social_network.sql
         test -f supabase/functions/create-order/order-lines.test.ts
         test -f supabase/functions/_shared/gallery-validation.test.ts
         test -f supabase/functions/_shared/chat-validation.test.ts
+        test -f supabase/functions/_shared/social-validation.test.ts
     - name: Run dependency-free validation tests
       shell: bash
       working-directory: ${{ inputs.project-dir }}
@@ -23,3 +27,4 @@ runs:
         node --experimental-strip-types --test supabase/functions/create-order/order-lines.test.ts
         node --experimental-strip-types --test supabase/functions/_shared/gallery-validation.test.ts
         node --experimental-strip-types --test supabase/functions/_shared/chat-validation.test.ts
+        node --experimental-strip-types --test supabase/functions/_shared/social-validation.test.ts
