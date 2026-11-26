@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { normalizeSocialCaption, validateSocialMedia, SOCIAL_IMAGE_MAX_BYTES, SOCIAL_VIDEO_MAX_BYTES } from '../../../src/lib/social-validation.ts'
+import { normalizeSocialCaption, validateSocialCaption, validateSocialMedia, SOCIAL_IMAGE_MAX_BYTES, SOCIAL_VIDEO_MAX_BYTES } from '../../../src/lib/social-validation.ts'
 
 test('accepts supported image and video formats', () => {
-  assert.deepEqual(validateSocialMedia({ name: 'quilt.jpg', type: 'image/jpeg', size: 1024 }), { ok: true, mediaType: 'image', mimeType: 'image/jpeg', extension: 'jpg' })
+  assert.deepEqual(validateSocialMedia({ name: 'quilt.jpg', type: 'image/jpeg', size: 1024 }), { ok: true, kind: 'image', mediaType: 'image', mimeType: 'image/jpeg', extension: 'jpg' })
   assert.equal(validateSocialMedia({ name: 'reel.mp4', type: 'video/mp4', size: 1024 }).ok, true)
 })
 
@@ -21,4 +21,9 @@ test('normalizes and bounds captions', () => {
   assert.deepEqual(normalizeSocialCaption('  سلام  '), { ok: true, caption: 'سلام' })
   assert.deepEqual(normalizeSocialCaption('  '), { ok: false, error: 'empty' })
   assert.deepEqual(normalizeSocialCaption('x'.repeat(2201)), { ok: false, error: 'too_long' })
+})
+
+test('provides caption errors consumed by the social composer', () => {
+  assert.deepEqual(validateSocialCaption(' '), { ok: false, error: 'caption_required' })
+  assert.deepEqual(validateSocialCaption('x'.repeat(2201)), { ok: false, error: 'caption_too_long' })
 })
