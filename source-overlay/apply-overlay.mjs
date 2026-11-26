@@ -61,7 +61,8 @@ import './premium-foundation.css'
 import './premium-overhaul.css'
 import './kaveh-visual-parity.css'
 import './visual-interactions'
-import './route-metadata'`)
+import './route-metadata'
+import './reference-ateliers.css'`)
 replaceOnce("  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },", "  { to: '/', label: 'خانه', Icon: Home },\n  { to: '/social', label: 'جامعه', Icon: Users },\n  { to: '/stash', label: 'انبار پارچه', Icon: Package },\n  { to: '/shop', label: 'فروشگاه', Icon: ShoppingBag },")
 replaceOnce("  { to: '/projects', label: 'پروژه‌ها', Icon: Compass },\n", "")
 replaceOnce("  ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],", "  ['/social', 'جامعه و فید'], ['/reels', 'ریلز'], ['/admin/social-moderation', 'مدیریت جامعه'], ['/projects', 'پروژه‌ها'], ['/courses', 'دوره‌ها'], ['/guide', 'دانشنامه'], ['/designer', 'طراح بلوک'], ['/gallery', 'گالری'],")
