@@ -20,7 +20,8 @@ for (const entry of [
   'supabase/migrations/20261126102552_fix_storage_policy_rls_subquery_grants.sql',
   'supabase/migrations/20261126103000_qnr_fabric_stash_inventory.sql',
   'supabase/migrations/20261126110000_admin_social_moderation_workflow.sql',
-  'supabase/migrations/20261126111500_harden_social_moderation_inputs.sql'
+  'supabase/migrations/20261126111500_harden_social_moderation_inputs.sql',
+  'supabase/migrations/20261126113000_move_social_moderation_rpc_to_private_schema.sql'
 ]) {
   const source = join(overlayRoot, entry)
   const target = join(projectDir, entry)

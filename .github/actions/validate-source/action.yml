@@ -19,6 +19,7 @@ runs:
         test -f src/app/social-moderation-admin.css
         test -f supabase/migrations/20261126110000_admin_social_moderation_workflow.sql
         test -f supabase/migrations/20261126111500_harden_social_moderation_inputs.sql
+        test -f supabase/migrations/20261126113000_move_social_moderation_rpc_to_private_schema.sql
         test -f supabase/migrations/20261126093000_qnr_social_network.sql
         test -f supabase/migrations/20261126095938_qnr_social_metrics_security_and_indexes.sql
         test -f supabase/migrations/20261126100341_qnr_social_acl_hardening.sql
