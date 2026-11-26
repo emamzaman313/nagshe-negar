@@ -72,7 +72,7 @@ function GlobalMusicPlayer() {
   },[volume,enabled,position,track,current])
   useEffect(()=>{
     if(!supabase||!userId)return
-    void supabase.from('qnr_music_preferences').upsert({user_id:userId,volume,music_enabled:enabled,last_track_id:track?.id??null,last_position_seconds:Math.floor(current),updated_at:new Date().toISOString()})
+    void supabase.from('qnr_music_preferences').upsert({user_id:userId,volume,music_enabled:enabled,last_track_id:track?.id??null,last_position_seconds:0,updated_at:new Date().toISOString()})
   },[userId,volume,enabled,track?.id])
   useEffect(()=>{
     const onTime=()=>{if(audio.current){setCurrent(audio.current.currentTime);setDuration(audio.current.duration||0)}}
@@ -87,6 +87,7 @@ function GlobalMusicPlayer() {
     const el=audio.current
     if(!enabled){setNotice('ابتدا موسیقی را فعال کن.');return}
     if(!el||!track?.audio_url){setNotice('ابتدا یک قطعه از کتابخانه انتخاب کن.');return}
+    if(el.src!==track.audio_url){el.src=track.audio_url;el.load()}
     if(el.paused) void el.play().then(()=>{setPlaying(true);setNotice('')}).catch(()=>{setPlaying(false);setNotice('پخش توسط مرورگر مسدود شد؛ دوباره لمس کن.')})
     else{el.pause();setPlaying(false)}
   }

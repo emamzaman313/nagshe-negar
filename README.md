@@ -72,7 +72,7 @@ cd android
 
 حقوق موسیقی: هیچ قطعهٔ تجاری بدون مجوز وارد نشده است. کاربر هنگام بارگذاری باید صاحب اثر یا دارندهٔ مجوز باشد؛ مدیر پیش از انتشار مدرک را بررسی می‌کند. فعلاً هیچ سرویس پخش ثالث یا API پولی متصل نیست.
 
-Migrationها: source-overlay/supabase/migrations/20261126152326_qnr_music_platform_20261126.sql و source-overlay/supabase/migrations/20261126152656_qnr_music_foreign_key_indexes.sql.
+Migrationها: source-overlay/supabase/migrations/20261126152326_qnr_music_platform_20261126.sql و source-overlay/supabase/migrations/20261126152656_qnr_music_foreign_key_indexes.sql و source-overlay/supabase/migrations/20261126152845_qnr_music_public_playlist_read.sql.
 
 ## نقشهٔ ادامهٔ توسعه
 

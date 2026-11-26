@@ -25,6 +25,7 @@ runs:
         test -f supabase/functions/_shared/music-validation.test.ts
         test -f supabase/migrations/20261126152326_qnr_music_platform_20261126.sql
         test -f supabase/migrations/20261126152656_qnr_music_foreign_key_indexes.sql
+        test -f supabase/migrations/20261126152845_qnr_music_public_playlist_read.sql
         test -f supabase/migrations/20261126110000_admin_social_moderation_workflow.sql
         test -f supabase/migrations/20261126111500_harden_social_moderation_inputs.sql
         test -f supabase/migrations/20261126113000_move_social_moderation_rpc_to_private_schema.sql

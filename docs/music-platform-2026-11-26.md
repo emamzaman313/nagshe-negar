@@ -7,7 +7,7 @@
 - پخش‌کننده: یک React root مستقل از Router؛ با تغییر مسیر صفحه از بین نمی‌رود.
 - Backend: Supabase Postgres با RLS و Storage خصوصی.
 - فایل‌ها: bucket خصوصی qnr-music، حداکثر ۵۰ MiB، فرمت‌های MP3/M4A/AAC/OGG/WAV/FLAC و کاور JPG/PNG/WebP.
-- Playback: لینک امضاشدهٔ ۳۰ دقیقه‌ای در صفحهٔ کتابخانه و ۴ ساعت برای track بازیابی‌شده در player.
+- Playback: لینک امضاشدهٔ چهار ساعته برای کتابخانه و player.
 - یکپارچگی فایل: SHA-256 هنگام بارگذاری.
 - پلتفرم: وب و Android از کد React/Capacitor مشترک build می‌شوند؛ پخش پس‌زمینهٔ واقعی در Android هنگام بسته‌شدن اپ هنوز نیازمند MediaSession/Foreground Service بومی است.
 
@@ -28,7 +28,13 @@
 - همهٔ trackها باید rights_confirmed باشند و در وضعیت pending وارد صف بررسی شوند.
 - فایل صوتی و کاور در bucket خصوصی می‌مانند.
 - عملیات INSERT/UPDATE/DELETE در track audit می‌شوند.
-- Foreign keyهای جدید با migration دوم index شده‌اند.
+- Foreign keyهای جدید index شده‌اند.
+- پلی‌لیست عمومی برای کاربران مهمان قابل مشاهده است، اما فقط قطعه‌های منتشرشده و عمومی در آن نمایش داده می‌شوند.
+
+## Migrationهای اجراشده
+- 20261126152326_qnr_music_platform_20261126
+- 20261126152656_qnr_music_foreign_key_indexes
+- 20261126152845_qnr_music_public_playlist_read
 
 ## محدودیت‌ها / فاز بعدی
 - اتصال UI پست/ریلز به soundtrack_track_id هنوز کامل نشده است.

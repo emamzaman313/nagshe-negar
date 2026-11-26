@@ -28,7 +28,7 @@ const errorText = (e:unknown) => e instanceof Error ? e.message : 'خطای نا
 
 async function signed(path:string|null) {
   if (!path || !supabase) return ''
-  const {data,error} = await supabase.storage.from('qnr-music').createSignedUrl(path,1800)
+  const {data,error} = await supabase.storage.from('qnr-music').createSignedUrl(path,14400)
   if (error) return ''
   return data.signedUrl
 }
